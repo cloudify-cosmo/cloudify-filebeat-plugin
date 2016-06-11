@@ -1,0 +1,53 @@
+node_types:
+
+  my_types.nodes.NgnixNode:
+    derived_from: cloudify.nodes.DBMS
+#    properties:
+#      influxdb_admin_port:
+#        type: string
+#        default: 8083
+#      influxdb_port:
+#        type: string
+#        default: 8086
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create: ngnix/scripts/create_ngnix.sh
+        configure: {}
+        start:
+          implementation: ngnix/scripts/start_ngnix.sh
+#          inputs:
+#            influxdb_port:
+#              type: string
+#              default: 8086
+
+
+  my_types.nodes.ElasticsearchServer:
+    derived_from: cloudify.nodes.DBMS
+    properties:
+      port:
+        description: elasticsearch port
+        type: integer
+      clusterName:
+         description: elasticsearch cluster name
+         type: string
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create: elasticsearch/scripts/install-elasticsearch.sh
+
+  my_types.nodes.logstashServer:
+    derived_from: cloudify.nodes.ApplicationServer
+    properties:
+      port:
+        description: logstash port
+        type: integer
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create: scripts/logstash/install-logstash.sh
+
+relationships:
+
+  my_types.relationships.ConfigureIp:
+    derived_from: cloudify.relationships.depends_on
+    target_interfaces:
+      cloudify.interfaces.relationship_lifecycle:
+        create: influxdb/scripts/configure_ip.sh

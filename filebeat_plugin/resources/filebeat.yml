@@ -1,0 +1,108 @@
+################### Filebeat Configuration Example #########################
+
+############################# Filebeat ######################################
+filebeat:
+  # List of prospectors to fetch data.
+  prospectors:
+    # Each - is a prospector. Below are the prospector specific configurations
+    -
+      # Paths that should be crawled and fetched. Glob based paths.
+      # To fetch all ".log" files from a specific level of subdirectories
+      # /var/log/*/*.log can be used.
+      # For each file found under this path, a harvester is started.
+      # Make sure not file is defined twice as this can lead to unexpected behaviour.
+      paths:
+        - /var/log/*.log
+      # - c:\programdata\elasticsearch\logs\*
+
+      # Type of the files. Based on this the way the file is read is decided.
+      # The different types cannot be mixed in one prospector
+      #
+      # Possible options are:
+      # * log: Reads every line of the log file (default)
+      # * stdin: Reads the standard in
+      input_type: log
+
+
+  # General filebeat configuration options
+  #
+  # Event count spool threshold - forces network flush if exceeded
+  #spool_size: 1024
+
+  # Defines how often the spooler is flushed. After idle_timeout the spooler is
+  # Flush even though spool_size is not reached.
+  #idle_timeout: 5s
+
+  # Name of the registry file. Per default it is put in the current working
+  # directory. In case the working directory is changed after when running
+  # filebeat again, indexing starts from the beginning again.
+  #registry_file: .filebeat
+
+  # Full Path to directory with additional prospector configuration files. Each file must end with .yml
+  # These config files must have the full filebeat config part inside, but only
+  # the prospector part is processed. All global options like spool_size are ignored.
+  # The config_dir MUST point to a different directory then where the main filebeat config file is in.
+  #config_dir:
+
+
+
+###############################################################################
+############################# Libbeat Config ##################################
+# Base config file used by all other beats for using libbeat features
+
+############################# Output ##########################################
+output:
+{% for elem, dict in outputs.iteritems() %}
+{{ elem }}:
+  {% for key, value in dict.iteritems() %}
+    {% if value is sameas true %}
+      {{ key }}: true
+    {% elif value is sameas false %}
+      {{ key }}: false
+    {% elif value is string or value is number %}
+      {{ key }}: "{{ value }}"
+    {% else %}
+          {{ key }}: ["{{ '", "'.join(value) }}"]
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+
+############################# Shipper #########################################
+
+shipper:
+{% for elem, dict in inputs.iteritems() %}
+{{ elem }}:
+  {% if not dict is none %}  
+    {% for key, value in dict.iteritems() %}
+      {% if value is sameas true %}
+        {{ key }}: true
+      {% elif value is sameas false %}
+        {{ key }}: false
+      {% elif value is string or value is number %}
+        {{ key }}: "{{ value }}"
+      {% else %}
+        {{ key }}: ["{{ '", "'.join(value) }}"]
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endfor %}
+
+############################# Logging #########################################
+
+logging:
+{% for elem, dict in inputs.iteritems() %}
+{{ elem }}:
+  {% if not dict is none %}
+    {% for key, value in dict.iteritems() %}
+      {% if value is sameas true %}
+        {{ key }}: true
+      {% elif value is sameas false %}
+        {{ key }}: false
+      {% elif value is string or value is number %}
+        {{ key }}: "{{ value }}"
+      {% else %}
+        {{ key }}: ["{{ '", "'.join(value) }}"]
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endfor %}
