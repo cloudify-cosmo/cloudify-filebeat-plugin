@@ -53,7 +53,7 @@ filebeat:
 ############################# Output ##########################################
 output:
 {% for elem, dict in outputs.iteritems() %}
-{{ elem }} :
+  {{ elem }} :
   {% for key, value in dict.iteritems() %}
     {% if value is sameas true %}
       {{ key }}: true
@@ -70,7 +70,7 @@ output:
 ############################# Shipper #########################################
 
 {% for elem, dict in inputs.iteritems() %}
-{{ elem }}:
+  {{ elem }}:
   {% if not dict is none %}
     {% for key, value in dict.iteritems() %}
       {% if value is sameas true %}
