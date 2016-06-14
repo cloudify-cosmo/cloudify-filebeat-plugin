@@ -26,7 +26,7 @@ setup(
     version='0.1',
     author='Gigaspaces',
     author_email='cosmo-admin@gigaspaces.com',
-    description='plgin for running logging interface (based on Filebeats)',
+    description='plugin for running logging interface (based on Filebeats)',
 
     # This must correspond to the actual packages in the plugin.
     packages=['filebeat_plugin'],
@@ -38,7 +38,6 @@ setup(
         "cloudify-plugins-common>=3.4m5"
     ],
     test_requires=[
-        "cloudify-dsl-parser>=3.4m5"
-        "nose"
+        'cloudify-dsl-parser>=3.4m5', 'nose', 'distro==0.5.0'
     ]
 )

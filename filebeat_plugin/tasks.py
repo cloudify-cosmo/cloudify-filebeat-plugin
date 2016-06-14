@@ -39,7 +39,7 @@ from cloudify import ctx
 from cloudify import exceptions
 from cloudify.decorators import operation
 
-import logger_plugin
+import filebeat_plugin
 
 
 @operation
