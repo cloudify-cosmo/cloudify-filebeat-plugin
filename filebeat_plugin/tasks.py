@@ -81,7 +81,7 @@ def start(filebeats_config_file='', **kwargs):
     If filebeats service was already running -
     it will restart it and will use updated configuration file.
     """
-    ctx.logger.info('Starting filebeats service...')
+    ctx.logger.info('Starting filebeat service...')
     if not filebeats_config_file:
         filebeats_config_file = '/etc/filebeat/filebeat.yml'
     if not os.path.isfile(filebeats_config_file):
@@ -90,10 +90,10 @@ def start(filebeats_config_file='', **kwargs):
     try:
         _run('sudo /etc/init.d/filebeat start')
     except SystemExit:
-        _run('sudo service filebeats restart')
+        _run('sudo service filebeat restart')
 
     ctx.logger.info(
-        'GoodLuck! filebeats service is up!'
+        'GoodLuck! filebeat service is up!'
         'Have an awesome logging experience...')
 
 
@@ -103,7 +103,7 @@ def download_filebeats(filebeats_install_path, dist, download_url='', **kwargs):
     Default url set to be version 0.12.0
     anf downloaded from official influxdb site.
     """
-    ctx.logger.info('Downloading filebeats...')
+    ctx.logger.info('Downloading filebeat...')
 
     if not download_url:
         if dist in ('ubuntu', 'debian'):
@@ -115,7 +115,7 @@ def download_filebeats(filebeats_install_path, dist, download_url='', **kwargs):
                 'Error! distribution is not supported')
     installation_file = _download_file(download_url, filebeats_install_path)
 
-    ctx.logger.info('filebeats downloaded...installing..')
+    ctx.logger.info('filebeat downloaded...installing..')
     return installation_file
 
 
@@ -133,7 +133,7 @@ def install_filebeats(filebeats_install_path, dist, installation_file, **kwargs)
         raise exceptions.NonRecoverableError(
             'Error! distribution is not supported')
     _run(cmd)
-    ctx.logger.info('filebeats service was installed...')
+    ctx.logger.info('filebeat service was installed...')
 
 
 def configure(telgraf_config, filebeats_config_file='', **kwargs):
@@ -142,20 +142,20 @@ def configure(telgraf_config, filebeats_config_file='', **kwargs):
 
     Rendering your inputs/outputs definitions.
     """
-    ctx.logger.info('Configuring filebeats.conf...')
+    ctx.logger.info('Configuring filebeat.yml...')
 
     if not filebeats_config_file:
         filebeats_config_file_temp = pkg_resources.resource_string(
-            filebeat_plugin.__name__, 'resources/filebeats.conf')
+            filebeat_plugin.__name__, 'resources/filebeat.yml')
         configuration = jinja2.Template(filebeats_config_file_temp)
-        filebeats_config_file = '/tmp/filebeats.conf'
+        filebeats_config_file = '/tmp/filebeat.yml'
         with open(filebeats_config_file, 'w') as f:
             f.write(configuration.render(telgraf_config))
     else:
         ctx.download_resource_and_render(filebeats_config_file,
                                          template_variables=telgraf_config)
     _run('sudo mv {0} /etc/filebeat/filebeat.yml'.format(filebeats_config_file))
-    ctx.logger.info('filebeats.conf was configured...')
+    ctx.logger.info('filebeat.yml was configured...')
 
 
 def _download_file(url, destination):
