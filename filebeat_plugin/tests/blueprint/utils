@@ -1,0 +1,76 @@
+#!/bin/bash -e
+
+function create_dir() {
+    dir=$1
+
+    if [ -d $dir ]; then
+        return 0
+    fi
+
+    ctx logger info "Creating directory ${dir}..."
+    sudo mkdir -p ${dir}
+}
+
+
+function create_opt_dir() {
+    component_name=$1
+
+    path=$(create_dir /opt/${component_name})
+}
+
+
+function download_component() {
+	component=$1
+	url=$2
+	destination=$3	        
+	
+	ctx logger info "Downloading ${component}..."	
+	if [[ -z ${destination} ]]; then
+           destination=$(mktemp -d)	
+	fi			
+
+        cd ${destination}
+        sudo wget ${url}
+	
+        file_name=$(echo "${url}" |awk -F/ '{print $NF}')
+	echo "${destination}/${file_name}"
+}
+
+function install_component() {
+	component=$1
+	installtion_file=$2
+	destination=$3	
+
+        ctx logger info "Installing ${component}..."
+
+	if [[ -z ${destination} ]]; then
+           sudo dpkg -i ${installtion_file}
+        else
+	   sudo mv ${installtion_file} ${destination}
+           sudo dpkg -i ${destination}
+	fi
+}
+
+function configure_component() {
+	component=$1	
+	config_file=$2
+	destination=$3
+	
+        ctx logger info "Configuring ${config_file} file..."
+	config_file_path=$(ctx download-resource-and-render components/${component}/${config_file})
+
+	sudo mv ${config_file_path} ${destination}
+
+	ctx logger info "${config_file} file was configured..."
+}
+
+
+function start_service() {
+	service=$1	
+
+	ctx logger info "Starting up ${service} service..."	
+	sudo service ${service} start 
+}
+
+
+
