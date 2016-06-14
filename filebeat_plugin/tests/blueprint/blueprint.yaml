@@ -114,8 +114,8 @@ node_templates:
           inputs:
             filebeats_install_path:
             download_url:
-            filebeats_config_file:
-            filebeats_config_inputs:
+            filebeat_config_file:
+            filebeat_config_inputs:
               outputs:
                 elasticsearch:
                   hosts:

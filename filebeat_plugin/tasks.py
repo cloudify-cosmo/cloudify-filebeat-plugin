@@ -43,48 +43,48 @@ import filebeat_plugin
 
 
 @operation
-def install(filebeats_config_inputs, filebeats_config_file='',
-            filebeats_install_path='', download_url='', **kwargs):
+def install(filebeat_config_inputs, filebeat_config_file='',
+            filebeat_install_path='', download_url='', **kwargs):
     """Installation operation.
 
-    Downloading and installing filebeats packacge - default version is 0.12.0.
-    Default installation dir is set to /opt/filebeats.
+    Downloading and installing filebeat packacge - default version is 0.12.0.
+    Default installation dir is set to /opt/filebeat.
     Only linux distributions are supported.
     """
     if 'linux' not in sys.platform:
         raise exceptions.NonRecoverableError('''Error!
-         filebeats-plugin is available on linux distribution only''')
+         filebeat-plugin is available on linux distribution only''')
     dist = distro.id()
 
-    if not filebeats_install_path:
-        filebeats_install_path = '/opt/filebeats'
+    if not filebeat_install_path:
+        filebeat_install_path = '/opt/filebeat'
     ctx.instance.runtime_properties[
-        'filebeats_install_path'] = filebeats_install_path
-    if os.path.isfile(filebeats_install_path):
+        'filebeat_install_path'] = filebeat_install_path
+    if os.path.isfile(filebeat_install_path):
         raise exceptions.NonRecoverableError(
-            "Error! /opt/filebeats file already exists, can't create dir.")
+            "Error! /opt/filebeat file already exists, can't create dir.")
 
-    if not os.path.exists(filebeats_install_path):
-        _run('sudo mkdir -p {0}'.format(filebeats_install_path))
+    if not os.path.exists(filebeat_install_path):
+        _run('sudo mkdir -p {0}'.format(filebeat_install_path))
 
-    installation_file = download_filebeats(
-        filebeats_install_path, dist, download_url)
-    install_filebeats(filebeats_install_path, dist, installation_file)
-    configure(filebeats_config_inputs, filebeats_config_file)
+    installation_file = download_filebeat(
+        filebeat_install_path, dist, download_url)
+    install_filebeat(filebeat_install_path, dist, installation_file)
+    configure(filebeat_config_inputs, filebeat_config_file)
 
 
 @operation
-def start(filebeats_config_file='', **kwargs):
-    """Start operation call for filebeats service,
-    with filebeats_plugin configuration file.
+def start(filebeat_config_file='', **kwargs):
+    """Start operation call for filebeat service,
+    with filebeat_plugin configuration file.
 
-    If filebeats service was already running -
+    If filebeat service was already running -
     it will restart it and will use updated configuration file.
     """
     ctx.logger.info('Starting filebeat service...')
-    if not filebeats_config_file:
-        filebeats_config_file = '/etc/filebeat/filebeat.yml'
-    if not os.path.isfile(filebeats_config_file):
+    if not filebeat_config_file:
+        filebeat_config_file = '/etc/filebeat/filebeat.yml'
+    if not os.path.isfile(filebeat_config_file):
         raise exceptions.NonRecoverableError("Config file doesn't exists")
 
     try:
@@ -97,8 +97,8 @@ def start(filebeats_config_file='', **kwargs):
         'Have an awesome logging experience...')
 
 
-def download_filebeats(filebeats_install_path, dist, download_url='', **kwargs):
-    """Downloading filebeats package form your desire url.
+def download_filebeat(filebeat_install_path, dist, download_url='', **kwargs):
+    """Downloading filebeat package form your desire url.
 
     Default url set to be version 0.12.0
     anf downloaded from official influxdb site.
@@ -113,22 +113,22 @@ def download_filebeats(filebeats_install_path, dist, download_url='', **kwargs):
         else:
             raise exceptions.NonRecoverableError(
                 'Error! distribution is not supported')
-    installation_file = _download_file(download_url, filebeats_install_path)
+    installation_file = _download_file(download_url, filebeat_install_path)
 
     ctx.logger.info('filebeat downloaded...installing..')
     return installation_file
 
 
-def install_filebeats(filebeats_install_path, dist, installation_file, **kwargs):
-    """Depacking filebeats package."""
-    ctx.logger.info('Installing filebeats...')
+def install_filebeat(filebeat_install_path, dist, installation_file, **kwargs):
+    """Depacking filebeat package."""
+    ctx.logger.info('Installing filebeat...')
 
     if dist in ('ubuntu', 'debian'):
         cmd = 'sudo dpkg -i {0}/{1}'.format(
-            filebeats_install_path, installation_file)
+            filebeat_install_path, installation_file)
     elif dist in ('centos', 'redhat'):
         cmd = 'sudo rpm -vi {0}/{1}'.format(
-            filebeats_install_path, installation_file)
+            filebeat_install_path, installation_file)
     else:
         raise exceptions.NonRecoverableError(
             'Error! distribution is not supported')
@@ -136,25 +136,25 @@ def install_filebeats(filebeats_install_path, dist, installation_file, **kwargs)
     ctx.logger.info('filebeat service was installed...')
 
 
-def configure(telgraf_config, filebeats_config_file='', **kwargs):
+def configure(filebeat_config, filebeat_config_file='', **kwargs):
     """Generating configuration file from your own desire destination
-    or from filebeats_plugin filebeats.conf file.
+    or from filebeat_plugin filebeat.conf file.
 
     Rendering your inputs/outputs definitions.
     """
     ctx.logger.info('Configuring filebeat.yml...')
 
-    if not filebeats_config_file:
-        filebeats_config_file_temp = pkg_resources.resource_string(
+    if not filebeat_config_file:
+        filebeat_config_file_temp = pkg_resources.resource_string(
             filebeat_plugin.__name__, 'resources/filebeat.yml')
-        configuration = jinja2.Template(filebeats_config_file_temp)
-        filebeats_config_file = '/tmp/filebeat.yml'
-        with open(filebeats_config_file, 'w') as f:
-            f.write(configuration.render(telgraf_config))
+        configuration = jinja2.Template(filebeat_config_file_temp)
+        filebeat_config_file = '/tmp/filebeat.yml'
+        with open(filebeat_config_file, 'w') as f:
+            f.write(configuration.render(filebeat_config))
     else:
-        ctx.download_resource_and_render(filebeats_config_file,
-                                         template_variables=telgraf_config)
-    _run('sudo mv {0} /etc/filebeat/filebeat.yml'.format(filebeats_config_file))
+        ctx.download_resource_and_render(filebeat_config_file,
+                                         template_variables=filebeat_config)
+    _run('sudo mv {0} /etc/filebeat/filebeat.yml'.format(filebeat_config_file))
     ctx.logger.info('filebeat.yml was configured...')
 
 
