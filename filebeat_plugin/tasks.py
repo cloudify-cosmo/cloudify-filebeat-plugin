@@ -149,11 +149,15 @@ def configure(filebeat_config, filebeat_config_file='', **kwargs):
             filebeat_plugin.__name__, 'resources/filebeat.yml')
         configuration = jinja2.Template(filebeat_config_file_temp)
         filebeat_config_file = '/tmp/filebeat.yml'
+        print("ok1")
         with open(filebeat_config_file, 'w') as f:
+            print("ok2")
             f.write(configuration.render(filebeat_config))
+            print("ok3")
     else:
         ctx.download_resource_and_render(filebeat_config_file,
                                          template_variables=filebeat_config)
+    print("ok4")
     _run('sudo mv {0} /etc/filebeat/filebeat.yml'.format(filebeat_config_file))
     ctx.logger.info('filebeat.yml was configured...')
 
