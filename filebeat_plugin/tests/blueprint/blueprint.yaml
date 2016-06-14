@@ -8,8 +8,8 @@ imports:
     # including it in the blueprint directory and importing it
     # instead.
     - http://www.getcloudify.org/spec/cloudify/3.4m5/types.yaml
-    - http://www.getcloudify.org/spec/fabric-plugin/1.4/plugin.yaml
-    - http://www.getcloudify.org/spec/openstack-plugin/1.3.1/plugin.yaml
+    - http://www.getcloudify.org/spec/fabric-plugin/1.4.1/plugin.yaml
+    - http://www.getcloudify.org/spec/openstack-plugin/1.4/plugin.yaml
     # relative import of plugin.yaml that resides in the blueprint directory
     - test_plugin.yaml
     - my_types.yaml
@@ -110,7 +110,7 @@ node_templates:
     interfaces:
       cloudify.interfaces.monitoring_agent:
         install:
-          implementation: telegraf.telegraf_plugin.tasks.install
+          implementation: filebeat.filebeat_plugin.tasks.install
           inputs:
             filebeats_install_path:
             download_url:
@@ -128,13 +128,7 @@ node_templates:
                 files:
                 rotateeverybytes: 10485760
         start:
-            implementation: telegraf.telegraf_plugin.tasks.start
-
-  ngnix:
-    type: my_types.nodes.ngnix
-    relationships:
-      - type: cloudify.relationships.contained_in
-        target: VM
+            implementation: filebeat.filebeat_plugin.tasks.start
 
   elasticsearch:
     type: my_types.nodes.ElasticsearchServer
@@ -156,7 +150,7 @@ node_templates:
         target: elasticsearch
 
   ngnix:
-    type: my_types.nodes.Ngnixnode
+    type: my_types.nodes.NgnixNode
     relationships:
       - type: cloudify.relationships.contained_in
         target: VM

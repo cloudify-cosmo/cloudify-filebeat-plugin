@@ -32,7 +32,7 @@ node_types:
          type: string
     interfaces:
       cloudify.interfaces.lifecycle:
-        create: elasticsearch/scripts/install-elasticsearch.sh
+        create: elasticsearch/install-elasticsearch.sh
 
   my_types.nodes.logstashServer:
     derived_from: cloudify.nodes.ApplicationServer
@@ -42,7 +42,7 @@ node_types:
         type: integer
     interfaces:
       cloudify.interfaces.lifecycle:
-        create: scripts/logstash/install-logstash.sh
+        create: logstash/install-logstash.sh
 
 relationships:
 
@@ -50,4 +50,4 @@ relationships:
     derived_from: cloudify.relationships.depends_on
     target_interfaces:
       cloudify.interfaces.relationship_lifecycle:
-        create: influxdb/scripts/configure_ip.sh
+        create: general/configure_ip.sh

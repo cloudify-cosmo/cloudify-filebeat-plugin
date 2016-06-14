@@ -30,15 +30,15 @@ setup(
 
     # This must correspond to the actual packages in the plugin.
     packages=['filebeat_plugin'],
-    package_data={'filebeat_plugin': ['resources/filebeats.yml']},
+    package_data={'filebeat_plugin': ['resources/filebeat.yml']},
     license='LICENSE',
     zip_safe=False,
     install_requires=[
         # Necessary dependency for developing plugins, do not remove!
-        "cloudify-plugins-common>=3.4rc1"
+        "cloudify-plugins-common>=3.4m5"
     ],
     test_requires=[
-        "cloudify-dsl-parser>=3.4rc1"
+        "cloudify-dsl-parser>=3.4m5"
         "nose"
     ]
 )
