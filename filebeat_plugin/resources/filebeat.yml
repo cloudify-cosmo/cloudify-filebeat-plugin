@@ -71,7 +71,7 @@ output:
 
 {% for elem, dict in inputs.iteritems() %}
 {{ elem }}:
-  {% if not dict is none %}  
+  {% if not dict is none %}
     {% for key, value in dict.iteritems() %}
       {% if value is sameas true %}
         {{ key }}: true

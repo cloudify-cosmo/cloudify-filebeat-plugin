@@ -150,7 +150,10 @@ def configure(filebeat_config, filebeat_config_file='', **kwargs):
         configuration = jinja2.Template(filebeat_config_file_temp)
         filebeat_config_file = '/tmp/filebeat.conf'
         with open(filebeat_config_file, 'w') as f:
-            f.write(configuration.render(filebeat_config))
+            text = configuration.render(filebeat_config)
+            ctx.logger.info(text)
+            x = f.write(text)
+            ctx.logger.info(x)
     else:
         ctx.download_resource_and_render(filebeat_config_file,
                                          template_variables=filebeat_config)
