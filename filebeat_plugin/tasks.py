@@ -147,15 +147,10 @@ def configure(filebeat_config, filebeat_config_file='', **kwargs):
     if not filebeat_config_file:
         filebeat_config_file_temp = pkg_resources.resource_string(
             filebeat_plugin.__name__, 'resources/filebeat.yml')
-        ctx.logger.info("ok1")
         configuration = jinja2.Template(filebeat_config_file_temp)
-        ctx.logger.info("ok11")
-        filebeat_config_file = '/tmp/filebeat.yml'
-        ctx.logger.info("ok2")
+        filebeat_config_file = '/tmp/filebeat.conf'
         with open(filebeat_config_file, 'w') as f:
-            ctx.logger.info("ok3")
             f.write(configuration.render(filebeat_config))
-            ctx.logger.info("ok4")
     else:
         ctx.download_resource_and_render(filebeat_config_file,
                                          template_variables=filebeat_config)
