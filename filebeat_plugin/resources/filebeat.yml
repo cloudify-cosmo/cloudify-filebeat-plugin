@@ -69,7 +69,6 @@ output:
 
 ############################# Shipper #########################################
 
-shipper:
 {% for elem, dict in inputs.iteritems() %}
 {{ elem }}:
   {% if not dict is none %}  
@@ -87,22 +86,3 @@ shipper:
   {% endif %}
 {% endfor %}
 
-############################# Logging #########################################
-
-logging:
-{% for elem, dict in inputs.iteritems() %}
-{{ elem }}:
-  {% if not dict is none %}
-    {% for key, value in dict.iteritems() %}
-      {% if value is sameas true %}
-        {{ key }}: true
-      {% elif value is sameas false %}
-        {{ key }}: false
-      {% elif value is string or value is number %}
-        {{ key }}: "{{ value }}"
-      {% else %}
-        {{ key }}: ["{{ '", "'.join(value) }}"]
-      {% endif %}
-    {% endfor %}
-  {% endif %}
-{% endfor %}

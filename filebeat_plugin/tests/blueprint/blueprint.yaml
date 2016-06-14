@@ -123,10 +123,11 @@ node_templates:
                 logstash:
                   hosts:
                     - localhost:5044
-              shipper:
-              logging:
-                files:
-                rotateeverybytes: 10485760
+              inputs:
+                shipper:
+                logging:
+                  files:
+                  rotateeverybytes: 10485760
         start:
             implementation: filebeat.filebeat_plugin.tasks.start
 
