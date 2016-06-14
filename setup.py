@@ -35,9 +35,9 @@ setup(
     zip_safe=False,
     install_requires=[
         # Necessary dependency for developing plugins, do not remove!
-        "cloudify-plugins-common>=3.4m5"
+        'cloudify-plugins-common>=3.4m5',  'distro==0.5.0'
     ],
     test_requires=[
-        'cloudify-dsl-parser>=3.4m5', 'nose', 'distro==0.5.0'
+        'cloudify-dsl-parser>=3.4m5', 'nose',
     ]
 )
