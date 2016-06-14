@@ -53,7 +53,7 @@ filebeat:
 ############################# Output ##########################################
 output:
 {% for elem, dict in outputs.iteritems() %}
-{{ elem }}:
+{{ elem }} :
   {% for key, value in dict.iteritems() %}
     {% if value is sameas true %}
       {{ key }}: true
