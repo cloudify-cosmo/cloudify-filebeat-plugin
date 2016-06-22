@@ -9,7 +9,7 @@ function install_logstash()
     sudo mkdir /opt/logstash
     cd /opt/logstash
     sudo wget https://download.elastic.co/logstash/logstash/packages/debian/logstash_2.3.3-1_all.deb
-    sudo dpgk -i logstash_2.3.3-1_all.deb
+    sudo dpkg -i logstash_2.3.3-1_all.deb
 
     ctx logger info  "installing logstash contrib plugins"
     sudo /opt/logstash/bin/plugin install contrib
