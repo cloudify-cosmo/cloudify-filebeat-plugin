@@ -45,7 +45,25 @@ filebeat:
 output:
 
 {% for elem, dict in outputs.iteritems() %}
-{{ elem }}:
+  {{ elem }}:
+  {% for key, value in dict.iteritems() %}
+  {% if value is sameas true %}
+    {{ key }}: true
+   {% elif value is sameas false %}
+    {{ key }}: false
+  {% elif value is string or value is number %}
+    {{ key }}: "{{ value }}"
+  {% else %}
+    {{ key }}: ["{{ '", "'.join(value) }}"]
+  {% endif %}
+{% endfor %}
+{% endfor %}
+
+############################# Shipper #########################################
+
+{% for elem, dict in inputs.iteritems() %}
+  {{ elem }}:
+  {% if not dict is none %}
   {% for key, value in dict.iteritems() %}
     {% if value is sameas true %}
       {{ key }}: true
@@ -57,24 +75,6 @@ output:
       {{ key }}: ["{{ '", "'.join(value) }}"]
     {% endif %}
   {% endfor %}
-{% endfor %}
-
-############################# Shipper #########################################
-
-{% for elem, dict in inputs.iteritems() %}
-{{ elem }}:
-  {% if not dict is none %}
-    {% for key, value in dict.iteritems() %}
-      {% if value is sameas true %}
-        {{ key }}: true
-      {% elif value is sameas false %}
-        {{ key }}: false
-      {% elif value is string or value is number %}
-        {{ key }}: "{{ value }}"
-      {% else %}
-        {{ key }}: ["{{ '", "'.join(value) }}"]
-      {% endif %}
-    {% endfor %}
-  {% endif %}
+{% endif %}
 {% endfor %}
 
