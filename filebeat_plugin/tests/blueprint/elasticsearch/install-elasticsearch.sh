@@ -10,8 +10,8 @@ function install_elasticsearch()
 
     ctx logger info  "installing elasticsearch"
 
-    sudo mkdir /opt/elasticsearch
-    cd /opt/logstash
+    sudo mkdir -p /opt/elasticsearch
+    cd /opt/elasticsearch
     sudo wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-2.3.3.deb
     sudo dpkg -i elasticsearch-2.3.3.deb
 
@@ -22,7 +22,7 @@ function install_elasticsearch()
     sudo /usr/share/elasticsearch/bin/plugin --install lukas-vlcek/bigdesk
 
     ctx logger info  "starting elasticsearch server"
-    bin/elasticsearch
+    sudo service elasticsearch start
 }
 
 

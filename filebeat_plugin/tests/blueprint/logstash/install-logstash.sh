@@ -17,7 +17,6 @@ function install_logstash()
     
 
      ctx logger info  "Downloading conf file..."
-    sudo cp /home/ubuntu/elk/logstash/conf/logstash.conf /opt/logstash/conf
     config_file_path=$(ctx download-resource-and-render logstash/logstash.conf)
 	sudo mv ${config_file_path} /opt/logstash/logstash.conf
 
