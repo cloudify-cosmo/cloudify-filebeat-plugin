@@ -57,7 +57,7 @@ function configure_component() {
 	destination=$3
 	
         ctx logger info "Configuring ${config_file} file..."
-	config_file_path=$(ctx download-resource-and-render components/${component}/${config_file})
+	config_file_path=$(ctx download-resource-and-render /${component}/${config_file})
 
 	sudo mv ${config_file_path} ${destination}
 

@@ -117,16 +117,13 @@ node_templates:
             filebeat_config_file:
             filebeat_config_inputs:
               outputs:
-                elasticsearch:
-                  hosts:
-                    - localhost:9200
                 logstash:
                   hosts:
                     - localhost:5044
+                  index: filebeat
               inputs:
                 shipper:
                 logging:
-                  files: ''
                   rotateeverybytes: 10485760
         start:
             implementation: filebeat.filebeat_plugin.tasks.start

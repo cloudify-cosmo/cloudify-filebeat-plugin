@@ -4,24 +4,15 @@
 filebeat:
   # List of prospectors to fetch data.
   prospectors:
-    # Each - is a prospector. Below are the prospector specific configurations
     -
-      # Paths that should be crawled and fetched. Glob based paths.
-      # To fetch all ".log" files from a specific level of subdirectories
-      # /var/log/*/*.log can be used.
-      # For each file found under this path, a harvester is started.
-      # Make sure not file is defined twice as this can lead to unexpected behaviour.
       paths:
-        - /var/log/*.log
-      # - c:\programdata\elasticsearch\logs\*
-
-      # Type of the files. Based on this the way the file is read is decided.
-      # The different types cannot be mixed in one prospector
-      #
-      # Possible options are:
-      # * log: Reads every line of the log file (default)
-      # * stdin: Reads the standard in
-      input_type: log
+        - /var/log/syslog
+        - /var/log/auth.log
+      document_type: syslog
+    -
+      paths:
+        - "/var/log/nginx/*.log"
+      document_type: nginx-access
 
 
   # General filebeat configuration options
@@ -52,8 +43,9 @@ filebeat:
 
 ############################# Output ##########################################
 output:
+
 {% for elem, dict in outputs.iteritems() %}
-  {{ elem }} :
+{{ elem }}:
   {% for key, value in dict.iteritems() %}
     {% if value is sameas true %}
       {{ key }}: true
@@ -62,7 +54,7 @@ output:
     {% elif value is string or value is number %}
       {{ key }}: "{{ value }}"
     {% else %}
-          {{ key }}: ["{{ '", "'.join(value) }}"]
+      {{ key }}: ["{{ '", "'.join(value) }}"]
     {% endif %}
   {% endfor %}
 {% endfor %}
@@ -70,7 +62,7 @@ output:
 ############################# Shipper #########################################
 
 {% for elem, dict in inputs.iteritems() %}
-  {{ elem }}:
+{{ elem }}:
   {% if not dict is none %}
     {% for key, value in dict.iteritems() %}
       {% if value is sameas true %}
