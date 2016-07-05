@@ -9,7 +9,7 @@ filebeat:
       paths:
   {% for value in list %}
       {% if '.log' in value %}
-      - "{{ value }}"
+        - "{{ value }}"
       {% else %}
         - {{ value }}
       {% endif %}
