@@ -13,12 +13,10 @@ function install_logstash()
 
     ctx logger info  "installing logstash contrib plugins"
     sudo /opt/logstash/bin/plugin install contrib
-    mkdir -p logstash/conf &&
-    
 
      ctx logger info  "Downloading conf file..."
     config_file_path=$(ctx download-resource-and-render logstash/logstash.conf)
-	sudo mv ${config_file_path} /opt/logstash/logstash.conf
+	sudo mv ${config_file_path} /etc/logstash/conf.d/logstash.conf
 
     ctx logger info "logstash.conf was downloaded."
 
@@ -38,7 +36,7 @@ function install_logstash()
     ctx logger info "installing logstash filebeats input"
     sudo /opt/logstash/bin/plugin install logstash-input-beats
     ctx logger info "starting logstash"
-    sudo /opt/logstash/bin/logstash -f /opt/logstash/conf/logstash.conf
+    sudo service logstash start
 }
 
 
