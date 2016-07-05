@@ -4,10 +4,10 @@
 filebeat:
   # List of prospectors to fetch data.
   prospectors:
-{% for elem, dict in paths.iteritems() %}
+{% for elem in paths.iteritems() %}
     -
       paths:
-  {% for value in dict.iteritems() %}
+  {% for value in elem %}
       {% if '.log' in value %}
       - "{{ value }}"
       {% else %}
