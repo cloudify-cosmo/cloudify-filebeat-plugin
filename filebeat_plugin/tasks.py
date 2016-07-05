@@ -88,7 +88,7 @@ def start(filebeat_config_file='', **kwargs):
         raise exceptions.NonRecoverableError("Config file doesn't exists")
 
     try:
-        _run('sudo /etc/init.d/filebeat start')
+        _run('sudo /etc/init.d/filebeat restart')
     except SystemExit:
         _run('sudo service filebeat restart')
 

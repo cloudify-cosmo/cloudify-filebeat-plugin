@@ -8,11 +8,13 @@ function install_logstash()
     ctx logger info  "installing logstash"
     sudo mkdir /opt/logstash
     cd /opt/logstash
-    sudo wget https://download.elastic.co/logstash/logstash/packages/debian/logstash_2.3.3-1_all.deb
-    sudo dpkg -i logstash_2.3.3-1_all.deb
+    sudo apt-get install logstash
+
+#    sudo wget https://download.elastic.co/logstash/logstash/packages/debian/logstash_2.3.3-1_all.deb
+#    sudo dpkg -i logstash_2.3.3-1_all.deb
 
     ctx logger info  "installing logstash contrib plugins"
-    sudo /opt/logstash/bin/plugin install contrib
+#    sudo /opt/logstash/bin/plugin install contrib
 
      ctx logger info  "Downloading conf file..."
     config_file_path=$(ctx download-resource-and-render logstash/logstash.conf)
@@ -33,18 +35,20 @@ function install_logstash()
     #sudo start logstash
   
     # conf should include basic filtering and elasticsearch IP
-    ctx logger info "installing logstash filebeats input"
-    sudo /opt/logstash/bin/plugin install logstash-input-beats
+#    ctx logger info "installing logstash filebeats input"
+#    sudo /opt/logstash/bin/plugin install logstash-input-beats
     ctx logger info "starting logstash"
-    sudo service logstash start
+    sudo service logstash restart
+    sudo update-rc.d logstash defaults 96 9
 }
 
 
 function main(){
     ctx logger info  "preparing logstash environment..."
+    echo 'deb http://packages.elastic.co/logstash/2.2/debian stable main' | sudo tee /etc/apt/sources.list.d/logstash-2.2.x.list
     sudo apt-get -y update &&
     ctx logger info  "installing dependencies"
-    sudo apt-get install -y vim openjdk-7-jdk &&
+#    sudo apt-get install -y vim openjdk-7-jdk &&
     install_logstash &&
     ctx logger info  "bootstrap done"
 }

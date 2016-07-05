@@ -78,7 +78,7 @@ node_templates:
     properties:
       resource_id: example-security-group
       security_group:
-        description: Security group for influxdb component
+        description: Security group for logging-plugin example component
       rules:
         - remote_ip_prefix: 0.0.0.0/0
           port: 80
@@ -107,6 +107,8 @@ node_templates:
     relationships:
       - type: cloudify.openstack.server_connected_to_floating_ip
         target: public_ip1
+      - type: cloudify.openstack.server_connected_to_security_group
+        target: sg_ngnix_es_logstash
     interfaces:
       cloudify.interfaces.monitoring_agent:
         install:
