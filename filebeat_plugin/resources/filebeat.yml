@@ -4,17 +4,17 @@
 filebeat:
   # List of prospectors to fetch data.
   prospectors:
-{% for elem, dict in paths.iteritems() %}
+{% for elem in paths.iteritems() %}
     -
       paths:
-  {% for value in dict.iteritems() %}
+  {% for value in elem.iteritems() %}
       {% if '.log' in value %}
       - "{{ value }}"
       {% else %}
         - {{ value }}
-      document_type: {{ elem }}
       {% endif %}
   {% endfor %}
+      document_type: {{ elem }}
 {% endfor %}
 
   # General filebeat configuration options
