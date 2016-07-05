@@ -4,16 +4,14 @@
 filebeat:
   # List of prospectors to fetch data.
   prospectors:
+{% for elem, dict in paths.iteritems() %}
     -
       paths:
-        - /var/log/syslog
-        - /var/log/auth.log
-      document_type: syslog
-    -
-      paths:
-        - "/var/log/nginx/*.log"
-      document_type: nginx-access
-
+        {% for key, value in dict.iteritems() %}
+        - {{ value }}
+      document_type: {{ key }}
+  {% endfor %}
+{% endfor %}
 
   # General filebeat configuration options
   #

@@ -116,6 +116,10 @@ node_templates:
             download_url:
             filebeat_config_file:
             filebeat_config_inputs:
+              paths:
+                syslog: /var/log/syslog
+                syslog: "/var/log/auth.log"
+                nginx-access: "/var/log/nginx/*.log"
               outputs:
                 logstash:
                   hosts:
