@@ -43,11 +43,11 @@ function main()
     ctx logger info "Uploading Filebeat Index Template to Elasticsearch..."
     cd /opt/elasticsearch
     sudo curl -O https://gist.githubusercontent.com/thisismitch/3429023e8438cc25b86c/raw/d8c479e2a1adcea8b1fe86570e42abab0f10f364/filebeat-index-template.json
-    sudo curl -XPUT 'http://{{ ctx.instance.host_ip }}:9200/_template/filebeat?pretty' -d@filebeat-index-template.json
+    ELASTIC=$(ctx instance host_ip)
+    sudo curl -XPUT 'http://${ELASTIC}:9200/_template/filebeat?pretty' -d@filebeat-index-template.json
 
     ctx logger info "Set the ElasticSearch IP runtime property"
-    ELASTIC=$(ctx instance host_ip) 
-    ctx logger info "ElasticSearch IP is ${ELASTIC} "    
+    ctx logger info "ElasticSearch IP is ${ELASTIC} "
     ctx instance runtime_properties elasticsearch_ip_address $(ctx instance host_ip)
     ctx logger info  "bootstrap done"
 }
