@@ -9,8 +9,6 @@ node_types:
         start:
           implementation: ngnix/scripts/start_ngnix.sh
 
-
-
   my_types.nodes.ElasticsearchServer:
     derived_from: cloudify.nodes.DBMS
     properties:
