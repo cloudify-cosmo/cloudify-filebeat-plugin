@@ -71,8 +71,10 @@ output:
       {{ key }}: true
     {% elif value is sameas false %}
       {{ key }}: false
-    {% elif value is string or value is number %}
+    {% elif value is string %}
       {{ key }}: "{{ value }}"
+    {% elif value is number %}
+          {{ key }}: {{ value }}
     {% else %}
       {{ key }}: ["{{ '", "'.join(value) }}"]
     {% endif %}
