@@ -127,13 +127,13 @@ node_templates:
               outputs:
                 logstash:
                   hosts:
-                    - { concat: ['http://', get_attribute: [public_ip1, floating_ip_address], ':5044' ] }
+                    - http://localhost:5044
                   bulk_max_size: 1024
                   index: filebeat
-                elasticsearch:
-                  hosts:
-                    - { concat: ['http://', get_attribute: [public_ip1, floating_ip_address], ':9200' ] }
-                  path: filebeat.template.json
+#                elasticsearch:
+#                  hosts:
+#                    - { concat: ['http://', get_attribute: [public_ip1, floating_ip_address], ':9200' ] }
+#                  path: filebeat.template.json
               inputs:
                 shipper:
                 logging:
