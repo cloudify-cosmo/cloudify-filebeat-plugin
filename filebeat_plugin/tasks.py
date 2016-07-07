@@ -163,14 +163,17 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
 
 
 def _download_file(url, destination):
+    ctx.logger.info('ok1')
     filename = url.split('/')[-1]
-    temp_dir = tempfile.tempdir
+    temp_dir = tempfile.gettempdir()
     local_filename = os.path.join(temp_dir, filename)
     response = requests.get(url, stream=True)
+    ctx.logger.info('ok2')
     with open(local_filename, 'wb') as temp_file:
         for chunk in response.iter_content(chunk_size=512):
             if chunk:
                 temp_file.write(chunk)
+    ctx.logger.info('ok3')
     _run('sudo mv {0} {1}'.format(local_filename, os.path.join(destination, filename)))
     return filename
 
