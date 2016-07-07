@@ -128,10 +128,10 @@ def install_filebeat(installation_file, filebeat_install_path, **kwargs):
 
     if distro in ('ubuntu', 'debian'):
         install_cmd = 'sudo dpkg -i {0}'.format(
-            os.path.join(filebeat_install_path, installation_file))
+            os.path.join(filebeat_install_path, installation_file)[:-1])
     elif distro in ('centos', 'redhat'):
         install_cmd = 'sudo rpm -vi {0}'.format(
-            os.path.join(filebeat_install_path, installation_file))
+            os.path.join(filebeat_install_path, installation_file)[:-1])
     else:
         raise exceptions.NonRecoverableError(
             'Error! distribution is not supported. Ubuntu, Debian, Centos and Redhat are supported currently')
@@ -163,17 +163,14 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
 
 
 def _download_file(url, destination):
-    ctx.logger.info('ok1')
     filename = url.split('/')[-1]
     temp_dir = tempfile.gettempdir()
     local_filename = os.path.join(temp_dir, filename)
     response = requests.get(url, stream=True)
-    ctx.logger.info('ok2')
     with open(local_filename, 'wb') as temp_file:
         for chunk in response.iter_content(chunk_size=512):
             if chunk:
                 temp_file.write(chunk)
-    ctx.logger.info('ok3')
     _run('sudo mv {0} {1}'.format(local_filename, os.path.join(destination, filename)))
     return filename
 
