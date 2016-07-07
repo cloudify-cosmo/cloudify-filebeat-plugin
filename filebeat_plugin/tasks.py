@@ -59,7 +59,7 @@ def install(filebeat_config_inputs,
     if 'linux' not in sys.platform:
         raise exceptions.NonRecoverableError(
             'Error! filebeat-plugin is available on linux distribution only')
-
+    ctx.logger.info('ok1')
     if not filebeat_install_path:
         filebeat_install_path = os.path.join('/', 'opt', 'filebeat')
     ctx.instance.runtime_properties[
@@ -67,9 +67,11 @@ def install(filebeat_config_inputs,
     if os.path.isfile(filebeat_install_path):
         raise exceptions.NonRecoverableError(
             "Error! /opt/filebeat file already exists, can't create dir.")
-    
-    installation_file = download_filebeat(filebeat_install_path, download_url)
-    install_filebeat(filebeat_install_path, installation_file)
+
+    ctx.logger.info('!!!!!!!!!')
+    ctx.logger.info(filebeat_install_path)
+    installation_file = download_filebeat(download_url, filebeat_install_path)
+    install_filebeat(installation_file, filebeat_install_path)
     configure(filebeat_config_inputs, filebeat_config_file)
 
 
