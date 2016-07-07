@@ -139,7 +139,7 @@ def install_filebeat(installation_file, filebeat_install_path, **kwargs):
     ctx.logger.info('filebeat service was installed...')
 
 
-def configure(filebeat_config_file='', filebeat_config='' **kwargs):
+def configure(filebeat_config_file='', filebeat_config='', **kwargs):
     """Generating configuration file from your own desire destination
     or from filebeat_plugin filebeat.conf file.
 
