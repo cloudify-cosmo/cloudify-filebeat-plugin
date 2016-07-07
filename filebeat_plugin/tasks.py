@@ -60,6 +60,14 @@ def install(filebeat_config_inputs,
         raise exceptions.NonRecoverableError(
             'Error! filebeat-plugin is available on linux distribution only')
 
+    if not filebeat_install_path:
+        filebeat_install_path = os.path.join('/', 'opt', 'filebeat')
+    ctx.instance.runtime_properties[
+        'filebeat_install_path'] = filebeat_install_path
+    if os.path.isfile(filebeat_install_path):
+        raise exceptions.NonRecoverableError(
+            "Error! /opt/filebeat file already exists, can't create dir.")
+    
     installation_file = download_filebeat(filebeat_install_path, download_url)
     install_filebeat(filebeat_install_path, installation_file)
     configure(filebeat_config_inputs, filebeat_config_file)
@@ -95,13 +103,6 @@ def download_filebeat(download_url='', filebeat_install_path='', **kwargs):
     Default url set to be version 0.12.0
     anf downloaded from official influxdb site.
     """
-    if not filebeat_install_path:
-        filebeat_install_path = os.path.join('/', 'opt', 'filebeat')
-    ctx.instance.runtime_properties[
-        'filebeat_install_path'] = filebeat_install_path
-    if os.path.isfile(filebeat_install_path):
-        raise exceptions.NonRecoverableError(
-            "Error! /opt/filebeat file already exists, can't create dir.")
 
     if not os.path.exists(filebeat_install_path):
         _run('sudo mkdir -p {0}'.format(filebeat_install_path))
@@ -128,10 +129,10 @@ def install_filebeat(installation_file, filebeat_install_path, **kwargs):
 
     if distro in ('ubuntu', 'debian'):
         install_cmd = 'sudo dpkg -i {0}'.format(
-            os.path.join(filebeat_install_path, installation_file)[:-1])
+            os.path.join(filebeat_install_path, installation_file))
     elif distro in ('centos', 'redhat'):
         install_cmd = 'sudo rpm -vi {0}'.format(
-            os.path.join(filebeat_install_path, installation_file)[:-1])
+            os.path.join(filebeat_install_path, installation_file))
     else:
         raise exceptions.NonRecoverableError(
             'Error! distribution is not supported. Ubuntu, Debian, Centos and Redhat are supported currently')
