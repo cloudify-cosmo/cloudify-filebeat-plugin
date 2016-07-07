@@ -59,7 +59,6 @@ def install(filebeat_config_inputs,
     if 'linux' not in sys.platform:
         raise exceptions.NonRecoverableError(
             'Error! filebeat-plugin is available on linux distribution only')
-    ctx.logger.info('ok1')
     if not filebeat_install_path:
         filebeat_install_path = os.path.join('/', 'opt', 'filebeat')
     ctx.instance.runtime_properties[
@@ -68,11 +67,9 @@ def install(filebeat_config_inputs,
         raise exceptions.NonRecoverableError(
             "Error! /opt/filebeat file already exists, can't create dir.")
 
-    ctx.logger.info('!!!!!!!!!')
-    ctx.logger.info(filebeat_install_path)
     installation_file = download_filebeat(download_url, filebeat_install_path)
     install_filebeat(installation_file, filebeat_install_path)
-    configure(filebeat_config_inputs, filebeat_config_file)
+    configure(filebeat_config_file, filebeat_config_inputs)
 
 
 @operation
@@ -151,17 +148,22 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
     ctx.logger.info('Configuring filebeat...')
 
     if filebeat_config_file:
+        ctx.logger.info('not ok')
         ctx.download_resource_and_render(filebeat_config_file,
                                          template_variables=filebeat_config)
     else:
+        ctx.logger.info('ok1')
         filebeat_config_file_temp = pkg_resources.resource_string(
             filebeat_plugin.__name__, 'resources/filebeat.yml')
         configuration = jinja2.Template(filebeat_config_file_temp)
         filebeat_config_file = tempfile.TemporaryFile()
+        ctx.logger.info('ok2')
+        ctx.logger.info(filebeat_config_file)
         with open(filebeat_config_file, 'w') as f:
             f.write(configuration.render(filebeat_config))
-
+        ctx.logger.info('ok3')
     _run('sudo mv {0} {1}'.format(filebeat_config_file, os.path.join('/', 'etc', 'filebeat', 'filebeat.yml')))
+    ctx.logger.info('ok4')
     ctx.logger.info('filebeat was configured...')
 
 
