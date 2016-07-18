@@ -26,7 +26,7 @@ from mock import patch
 
 
 from cloudify.mocks import MockCloudifyContext
-from .. import tasks
+import tasks
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 
@@ -55,7 +55,8 @@ class TestFilebeatPlugin(unittest.TestCase):
         os.mkdir(TEMP_FILEBEAT)
         dict1 = {
             'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
-            'outputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
+            'outputs': {'string': 'string', 'int': 10,
+                        'list': ['a', 'b', 'c']},
             'paths': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']}
         }
         tasks.configure('', dict1)
