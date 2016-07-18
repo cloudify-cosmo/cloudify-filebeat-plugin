@@ -24,7 +24,6 @@ import distro
 from mock import patch
 
 
-from cloudify import ctx
 from cloudify.mocks import MockCloudifyContext
 from .. import tasks
 
@@ -47,7 +46,7 @@ CONFIG_FILE = os.path.join(TEMP_FILEBEAT, 'filebeat.yml')
 
 @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
 @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-@patch('ctx()', create_mock_context())
+@patch('tasks.ctx', create_mock_context())
 class TestFilebeatPlugin(unittest.TestCase):
 
     def test_configure_with_inputs_no_file(self, cfy_local):
