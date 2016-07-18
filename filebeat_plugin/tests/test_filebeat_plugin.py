@@ -57,17 +57,16 @@ def mock_install_ctx():
 def _create_mock_context(install_node_props,
                          node_id='fb_node',
                          service=TEST_SERVICE_NAME):
-    mock_node_props = MockNodeProperties(properties=install_node_props)
     return MockCloudifyContext(node_id=node_id,
                                node_name=service,
-                               properties=mock_node_props)
+                               properties=install_node_props)
 
 
 class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('tasks.ctx', mock_install_ctx())
+    @patch('../tasks.ctx', mock_install_ctx())
     def test_configure_with_inputs_no_file(self):
         '''validate configuration was rendered correctly
         and placed on the right place - with file comprison'''
