@@ -34,10 +34,26 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 distro = distro.id()
 PATH = os.path.dirname(__file__)
 
+class MockNodeProperties(dict):
 
-def create_mock_context():
+    def __init__(self, properties):
+        self.update(properties)
+
+    def get_all(self):
+        return self
+
+
+def mock_install_ctx():
+    install_node_props = {'es_rpm_source_url': 'http://www.mock.com/es.tar.gz',
+                          'test_property': 'test'}
+    return _create_mock_context(install_node_props)
+
+
+def _create_mock_context(install_node_props):
+    mock_node_props = MockNodeProperties(properties=install_node_props)
     return MockCloudifyContext(node_id='test_node',
-                               node_name='filebeat_test')
+                               node_name='filebeat_test',
+                               properties=mock_node_props)
 
 
 TEMP_FILEBEAT = os.path.join(tempfile.gettempdir(), 'filebeat')
@@ -49,7 +65,7 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('tasks.ctx', create_mock_context())
+    @patch('tasks.ctx', mock_install_ctx())
     def test_configure_with_inputs_no_file(self):
         '''validate configuration was rendered correctly
         and placed on the right place - with file comprison'''
@@ -120,7 +136,7 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('tasks.ctx', create_mock_context())
+    @patch('tasks.ctx', mock_install_ctx())
     def test_configure_with_inputs_and_file(self):
         '''validate configuration was rendered correctly and
          placed on the right place - with file comprison'''
@@ -140,7 +156,7 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('tasks.ctx', create_mock_context())
+    @patch('tasks.ctx', mock_install_ctx())
     def test_configure_with_file_without_inputs(self):
         '''validate configuration was rendered correctly and
          placed on the right place - with file comprison'''
@@ -154,7 +170,7 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('tasks.ctx', create_mock_context())
+    @patch('tasks.ctx', mock_install_ctx())
     def test_download_filebeat(self):
         '''verify file exists after download'''
         filename = tasks.download_filebeat('', PATH)
@@ -166,7 +182,7 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('tasks.ctx', create_mock_context())
+    @patch('tasks.ctx', mock_install_ctx())
     def test_download_file(self):
         '''verify file exists after download'''
         filename = tasks._download_file(
@@ -178,16 +194,16 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('tasks.ctx', create_mock_context())
+    @patch('tasks.ctx', mock_install_ctx())
     def test_download_file_failed(self):
         '''verify nothing downloaded'''
-        filename = tasks._download_file('', '')
-        self.assertEqual(filename, '')
+        filename = tasks._download_file(None, None)
+        self.assertEqual(filename, None)
         self.assertFalse(os.isfile(filename))
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('tasks.ctx', create_mock_context())
+    @patch('tasks.ctx', mock_install_ctx())
     def test_install_service(self):
         '''verify service is available after installation -
          installation file is provided'''
