@@ -15,6 +15,7 @@
 
 
 import os
+import sys
 import unittest
 import tempfile
 import subprocess
@@ -28,12 +29,11 @@ from cloudify.mocks import MockCloudifyContext
 from .. import tasks
 
 import filebeat_plugin
+sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 
 
 distro = distro.id()
-PATH = os.path.abspath(__file__)
-PATH = PATH.rsplit('/', 1)[0]
-
+PATH = os.path.dirname(__file__)
 
 
 def create_mock_context():
