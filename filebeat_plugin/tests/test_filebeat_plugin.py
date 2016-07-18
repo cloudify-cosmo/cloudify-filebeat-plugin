@@ -33,25 +33,16 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 distro = distro.id()
 PATH = os.path.dirname(__file__)
 
-class MockNodeProperties(dict):
-
-    def __init__(self, properties):
-        self.update(properties)
-
-    def get_all(self):
-        return self
-
 
 def mock_install_ctx():
-    install_node_props = {'test_property': 'test'}
-    return _create_mock_context(install_node_props)
+    return MockCloudifyContext()
 
-
-def _create_mock_context(install_node_props):
-    mock_node_props = MockNodeProperties(properties=install_node_props)
-    return MockCloudifyContext(node_id='test_node',
-                               node_name='filebeat_test',
-                               properties=mock_node_props)
+#
+# def _create_mock_context(install_node_props):
+#     mock_node_props = MockNodeProperties(properties=install_node_props)
+#     return MockCloudifyContext(node_id='test_node',
+#                                node_name='filebeat_test',
+#                                properties=mock_node_props)
 
 
 TEMP_FILEBEAT = os.path.join(tempfile.gettempdir(), 'filebeat')
