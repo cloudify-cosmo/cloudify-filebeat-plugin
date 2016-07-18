@@ -43,7 +43,8 @@ from cloudify.decorators import operation
 import filebeat_plugin
 
 distro = distro.id()
-FILEBEAT_CONFIG_FILE_DEFAULT = os.path.join('/', 'etc', 'filebeat', 'filebeat.yml')
+FILEBEAT_CONFIG_FILE_DEFAULT = os.path.join(
+    '/', 'etc', 'filebeat', 'filebeat.yml')
 FILEBEAT_INSTALL_PATH_DEFAULT = os.path.join('/', 'opt', 'filebeat')
 
 
@@ -113,12 +114,15 @@ def download_filebeat(download_url='', filebeat_install_path='', **kwargs):
 
     if not download_url:
         if distro in ('ubuntu', 'debian'):
-            download_url = 'https://download.elastic.co/beats/filebeat/filebeat_1.2.3_amd64.deb'
+            download_url = 'https://download.elastic.co/beats/filebeat/' + \
+                'filebeat_1.2.3_amd64.deb'
         elif distro in ('centos', 'redhat'):
-            download_url = 'https://download.elastic.co/beats/filebeat/filebeat-1.2.3-x86_64.rpm'
+            download_url = 'https://download.elastic.co/beats/filebeat/ ' + \
+                'filebeat-1.2.3-x86_64.rpm'
         else:
             raise exceptions.NonRecoverableError(
-                'Error! distribution is not supported. Ubuntu, Debian, Centos and Redhat are supported currently')
+                '''Error! distribution is not supported.
+                Ubuntu, Debian, Centos and Redhat are supported currently''')
     installation_file = _download_file(download_url, filebeat_install_path)
 
     ctx.logger.info('filebeat downloaded.')
@@ -137,7 +141,8 @@ def install_filebeat(installation_file, filebeat_install_path, **kwargs):
             os.path.join(filebeat_install_path, installation_file))
     else:
         raise exceptions.NonRecoverableError(
-            'Error! distribution is not supported. Ubuntu, Debian, Centos and Redhat are supported currently')
+            '''Error! distribution is not supported.
+            Ubuntu, Debian, Centos and Redhat are supported currently''')
     _run(install_cmd)
     ctx.logger.info('filebeat service was installed...')
 
@@ -157,11 +162,13 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
         filebeat_config_file_temp = pkg_resources.resource_string(
             filebeat_plugin.__name__, 'resources/filebeat.yml')
         configuration = jinja2.Template(filebeat_config_file_temp)
-        filebeat_config_file = os.path.join(tempfile.gettempdir(), 'filebeat.yml')
+        filebeat_config_file = os.path.join(tempfile.gettempdir(),
+                                            'filebeat.yml')
         ctx.logger.info(filebeat_config_file)
         with open(filebeat_config_file, 'w') as f:
             f.write(configuration.render(filebeat_config))
-    _run('sudo mv {0} {1}'.format(filebeat_config_file, FILEBEAT_CONFIG_FILE_DEFAULT))
+    _run('sudo mv {0} {1}'.format(filebeat_config_file,
+                                  FILEBEAT_CONFIG_FILE_DEFAULT))
     ctx.logger.info('filebeat was configured...')
 
 
@@ -174,7 +181,8 @@ def _download_file(url, destination):
         for chunk in response.iter_content(chunk_size=512):
             if chunk:
                 temp_file.write(chunk)
-    _run('sudo mv {0} {1}'.format(local_filename, os.path.join(destination, filename)))
+    _run('sudo mv {0} {1}'.format(local_filename, os.path.join(destination,
+                                                               filename)))
     return filename
 
 

@@ -28,7 +28,6 @@ from mock import patch
 from cloudify.mocks import MockCloudifyContext
 from .. import tasks
 
-import filebeat_plugin
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 
 
@@ -50,8 +49,9 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('tasks.ctx', create_mock_context())
-    def test_configure_with_inputs_no_file(self, cfy_local):
-        '''validate configuration was rendered correctly and placed on the right place - with file comprison'''
+    def test_configure_with_inputs_no_file(self):
+        '''validate configuration was rendered correctly
+        and placed on the right place - with file comprison'''
         os.mkdir(TEMP_FILEBEAT)
         dict1 = {
             'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
@@ -65,12 +65,17 @@ class TestFilebeatPlugin(unittest.TestCase):
                 yaml.load(stream)
             except yaml.YAMLError, exc:
                 raise AssertionError(exc)
-        output = subprocess.check_output(['filebeat', '-c', CONFIG_FILE, '-configtest'])
+        output = subprocess.check_output(['filebeat',
+                                          '-c',
+                                          CONFIG_FILE,
+                                          '-configtest'])
         self.assertNotIn('error', output)
 
         dict2 = {
             'inputs': None,
-            'outputs': {'string': 'string', 'int': None, 'list': ['a', 'b', 'c']},
+            'outputs': {'string': 'string', 'int': None, 'list': ['a',
+                                                                  'b',
+                                                                  'c']},
             'paths': {'string': 'string', 'int': 10, 'list': None}
         }
         tasks.configure('', dict2)
@@ -79,7 +84,10 @@ class TestFilebeatPlugin(unittest.TestCase):
                 yaml.load(stream)
             except yaml.YAMLError, exc:
                 raise AssertionError(exc)
-        output = subprocess.check_output(['filebeat', '-c', CONFIG_FILE, '-configtest'])
+        output = subprocess.check_output(['filebeat',
+                                          '-c',
+                                          CONFIG_FILE,
+                                          '-configtest'])
         self.assertNotIn('error', output)
 
         dict3 = {
@@ -96,7 +104,8 @@ class TestFilebeatPlugin(unittest.TestCase):
         self.assertNotIn('error', output)
 
         dict4 = {
-            'inputs': {'string': 'string', 'int': None, 'list': ['a', 'b', 'c']},
+            'inputs': {'string': 'string', 'int': None,
+                       'list': ['a', 'b', 'c']},
             'outputs': {'string': None, 'int': 10, 'list': ['a', 'b', 'c']},
             'paths': '',
         }
@@ -111,11 +120,13 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('tasks.ctx', create_mock_context())
-    def test_configure_with_inputs_and_file(self, cfy_local):
-        '''validate configuration was rendered correctly and placed on the right place - with file comprison'''
+    def test_configure_with_inputs_and_file(self):
+        '''validate configuration was rendered correctly and
+         placed on the right place - with file comprison'''
         dict1 = {
             'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
-            'outputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
+            'outputs': {'string': 'string', 'int': 10,
+                        'list': ['a', 'b', 'c']},
         }
 
         os.mkdir(TEMP_FILEBEAT)
@@ -130,8 +141,9 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('tasks.ctx', create_mock_context())
-    def test_configure_with_file_without_inputs(self, cfy_local):
-        '''validate configuration was rendered correctly and placed on the right place - with file comprison'''
+    def test_configure_with_file_without_inputs(self):
+        '''validate configuration was rendered correctly and
+         placed on the right place - with file comprison'''
         os.mkdir(TEMP_FILEBEAT)
         tasks.configure('example.yml', '')
         self.assertTrue(os.isfile(CONFIG_FILE))
@@ -158,7 +170,10 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('tasks.ctx', create_mock_context())
     def test_download_file(self):
         '''verify file exists after download'''
-        filename = tasks._download_file('https://download.elastic.co/beats/filebeat/filebeat_1.2.3_amd64.deb', PATH)
+        filename = tasks._download_file(
+            'https://download.elastic.co/beats/filebeat/' +
+            'filebeat_1.2.3_amd64.deb',
+            PATH)
         self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
         self.assertTrue(os.isfile(filename))
 
@@ -175,7 +190,8 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('tasks.ctx', create_mock_context())
     def test_install_service(self):
-        '''verify service is available after installation - installation file is provided'''
+        '''verify service is available after installation -
+         installation file is provided'''
         if distro in ('ubuntu', 'debian'):
             tasks.install_filebeat('filebeat_1.2.3_amd64.deb', PATH)
             output = subprocess.check_output(['dpkg', '-l', 'filebeat'])
@@ -184,5 +200,3 @@ class TestFilebeatPlugin(unittest.TestCase):
             tasks.install_filebeat('filebeat-1.2.3-x86_64.rpm', PATH)
             output = subprocess.check_output(['rpm', '-qa'])
             self.assertIn('filebeat', output)
-
-
