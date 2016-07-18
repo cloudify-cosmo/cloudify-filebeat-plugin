@@ -43,6 +43,9 @@ from cloudify.decorators import operation
 import filebeat_plugin
 
 distro = distro.id()
+FILEBEAT_CONFIG_FILE_DEFAULT = os.path.join('/', 'etc', 'filebeat', 'filebeat.yml')
+FILEBEAT_INSTALL_PATH_DEFAULT = os.path.join('/', 'opt', 'filebeat')
+
 
 @operation
 def install(filebeat_config_inputs,
@@ -60,7 +63,7 @@ def install(filebeat_config_inputs,
         raise exceptions.NonRecoverableError(
             'Error! filebeat-plugin is available on linux distribution only')
     if not filebeat_install_path:
-        filebeat_install_path = os.path.join('/', 'opt', 'filebeat')
+        filebeat_install_path = FILEBEAT_INSTALL_PATH_DEFAULT
     ctx.instance.runtime_properties[
         'filebeat_install_path'] = filebeat_install_path
     if os.path.isfile(filebeat_install_path):
@@ -81,7 +84,7 @@ def start(**kwargs):
     it will restart it and will use updated configuration file.
     """
     ctx.logger.info('Starting filebeat service...')
-    filebeat_config_file = os.path.join('/', 'etc', 'filebeat', 'filebeat.yml')
+    filebeat_config_file = FILEBEAT_CONFIG_FILE_DEFAULT
     if not os.path.isfile(filebeat_config_file):
         raise exceptions.NonRecoverableError(
             "Can't start the service. Wrong config file provided")
@@ -158,7 +161,7 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
         ctx.logger.info(filebeat_config_file)
         with open(filebeat_config_file, 'w') as f:
             f.write(configuration.render(filebeat_config))
-    _run('sudo mv {0} {1}'.format(filebeat_config_file, os.path.join('/', 'etc', 'filebeat', 'filebeat.yml')))
+    _run('sudo mv {0} {1}'.format(filebeat_config_file, FILEBEAT_CONFIG_FILE_DEFAULT))
     ctx.logger.info('filebeat was configured...')
 
 
