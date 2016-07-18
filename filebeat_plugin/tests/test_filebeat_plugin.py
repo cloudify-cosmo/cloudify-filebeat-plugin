@@ -26,6 +26,7 @@ from mock import patch
 
 
 from cloudify.mocks import MockCloudifyContext
+from .. import tasks
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 
 
@@ -42,8 +43,7 @@ class MockNodeProperties(dict):
 
 
 def mock_install_ctx():
-    install_node_props = {'es_rpm_source_url': 'http://www.mock.com/es.tar.gz',
-                          'test_property': 'test'}
+    install_node_props = {'test_property': 'test'}
     return _create_mock_context(install_node_props)
 
 
