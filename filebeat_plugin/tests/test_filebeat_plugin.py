@@ -42,7 +42,7 @@ def create_mock_context():
 
 TEMP_FILEBEAT = os.path.join(tempfile.gettempdir(), 'filebeat')
 CONFIG_FILE = os.path.join(TEMP_FILEBEAT, 'filebeat.yml')
-
+os.mkdir(TEMP_FILEBEAT)
 
 class TestFilebeatPlugin(unittest.TestCase):
 
@@ -52,7 +52,6 @@ class TestFilebeatPlugin(unittest.TestCase):
     def test_configure_with_inputs_no_file(self):
         '''validate configuration was rendered correctly
         and placed on the right place - with file comprison'''
-        os.mkdir(TEMP_FILEBEAT)
         dict1 = {
             'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
             'outputs': {'string': 'string', 'int': 10,
@@ -130,7 +129,6 @@ class TestFilebeatPlugin(unittest.TestCase):
                         'list': ['a', 'b', 'c']},
         }
 
-        os.mkdir(TEMP_FILEBEAT)
         tasks.configure('example_with_inputs.yml', dict1)
         self.assertTrue(os.isfile(CONFIG_FILE))
         with open(CONFIG_FILE, "r") as stream:
@@ -145,7 +143,6 @@ class TestFilebeatPlugin(unittest.TestCase):
     def test_configure_with_file_without_inputs(self):
         '''validate configuration was rendered correctly and
          placed on the right place - with file comprison'''
-        os.mkdir(TEMP_FILEBEAT)
         tasks.configure('example.yml', '')
         self.assertTrue(os.isfile(CONFIG_FILE))
         with open(CONFIG_FILE, "r") as stream:
