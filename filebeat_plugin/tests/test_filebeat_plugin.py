@@ -32,22 +32,35 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 
 distro = distro.id()
 PATH = os.path.dirname(__file__)
-
-
-def mock_install_ctx():
-    return MockCloudifyContext()
-
-#
-# def _create_mock_context(install_node_props):
-#     mock_node_props = MockNodeProperties(properties=install_node_props)
-#     return MockCloudifyContext(node_id='test_node',
-#                                node_name='filebeat_test',
-#                                properties=mock_node_props)
-
-
+TEST_SERVICE_NAME = 'filebeat'
+TEST_RESOURCE_NAME = 'test_resource'
 TEMP_FILEBEAT = os.path.join(tempfile.gettempdir(), 'filebeat')
 CONFIG_FILE = os.path.join(TEMP_FILEBEAT, 'filebeat.yml')
 os.mkdir(TEMP_FILEBEAT)
+
+
+class MockNodeProperties(dict):
+
+    def __init__(self, properties):
+        self.update(properties)
+
+    def get_all(self):
+        return self
+
+
+def mock_install_ctx():
+    install_node_props = {'es_rpm_source_url': 'http://www.mock.com/fb.tar.gz',
+                          'test_property': 'test'}
+    return _create_mock_context(install_node_props)
+
+
+def _create_mock_context(install_node_props,
+                         node_id='fb_node',
+                         service=TEST_SERVICE_NAME):
+    mock_node_props = MockNodeProperties(properties=install_node_props)
+    return MockCloudifyContext(node_id=node_id,
+                               node_name=service,
+                               properties=mock_node_props)
 
 
 class TestFilebeatPlugin(unittest.TestCase):
