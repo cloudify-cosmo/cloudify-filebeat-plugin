@@ -26,7 +26,7 @@ from mock import patch
 
 
 from cloudify.mocks import MockCloudifyContext
-import tasks
+from .. import tasks
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 
@@ -43,6 +43,7 @@ def create_mock_context():
 TEMP_FILEBEAT = os.path.join(tempfile.gettempdir(), 'filebeat')
 CONFIG_FILE = os.path.join(TEMP_FILEBEAT, 'filebeat.yml')
 os.mkdir(TEMP_FILEBEAT)
+
 
 class TestFilebeatPlugin(unittest.TestCase):
 
