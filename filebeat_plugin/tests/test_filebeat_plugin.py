@@ -26,8 +26,6 @@ from mock import patch
 
 
 from cloudify.mocks import MockCloudifyContext
-from .. import tasks
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 
 
