@@ -56,8 +56,8 @@ class TestFilebeatPlugin(unittest.TestCase):
             'paths': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']}
         }
         tasks.configure('', dict1)
-        self.assertTrue(os.isfile(CONFIG_FILE))
-        with open(CONFIG_FILE, "r") as stream:
+        self.assertTrue(os.path.exists(CONFIG_FILE))
+        with open(CONFIG_FILE) as stream:
             try:
                 yaml.load(stream)
             except yaml.YAMLError, exc:
@@ -129,7 +129,7 @@ class TestFilebeatPlugin(unittest.TestCase):
         }
 
         tasks.configure('example_with_inputs.yml', dict1)
-        self.assertTrue(os.isfile(CONFIG_FILE))
+        self.assertTrue(os.path.exists(CONFIG_FILE))
         with open(CONFIG_FILE) as stream:
             try:
                 yaml.load(stream)
@@ -146,7 +146,7 @@ class TestFilebeatPlugin(unittest.TestCase):
          rendered correctly and placed on the right place'''
 
         tasks.configure('example.yml', None)
-        self.assertTrue(os.isfile(CONFIG_FILE))
+        self.assertTrue(os.path.exists(CONFIG_FILE))
         with open(CONFIG_FILE) as stream:
             try:
                 yaml.load(stream)
