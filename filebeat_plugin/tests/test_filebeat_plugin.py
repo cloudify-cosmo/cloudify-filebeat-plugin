@@ -47,8 +47,6 @@ class TestFilebeatPlugin(unittest.TestCase):
     def test_configure_with_inputs_no_file(self):
         '''validate configuration without file -
         rendered correctly and placed on the right place'''
-        print(TEMP_FILEBEAT)
-        print(CONFIG_FILE)
         dict1 = {
             'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
             'outputs': {'string': 'string', 'int': 10,
@@ -158,7 +156,7 @@ class TestFilebeatPlugin(unittest.TestCase):
             self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
         elif distro in ('centos', 'redhat'):
             self.assertEqual(filename, 'filebeat-1.2.3-x86_64.rpm')
-        self.assertTrue(os.isfile(os.path.join(TEMP_FILEBEAT, filename)))
+        self.assertTrue(os.path.exists(os.path.join(TEMP_FILEBEAT, filename)))
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
@@ -170,8 +168,7 @@ class TestFilebeatPlugin(unittest.TestCase):
             'filebeat_1.2.3_amd64.deb',
             PATH)
         self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
-        print(filename)
-        self.assertTrue(os.isfile(filename))
+        self.assertTrue(os.path.exists(filename))
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
@@ -180,7 +177,7 @@ class TestFilebeatPlugin(unittest.TestCase):
         '''test download - verify nothing downloaded'''
         filename = tasks._download_file(None, None)
         self.assertEqual(filename, None)
-        self.assertFalse(os.isfile(filename))
+        self.assertFalse(os.path.exists(filename))
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
