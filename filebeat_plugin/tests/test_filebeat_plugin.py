@@ -139,7 +139,14 @@ class TestFilebeatPlugin(unittest.TestCase):
     def test_configure_with_file_without_inputs(self):
         '''validate configuration with file without inputs
          rendered correctly and placed on the right place'''
-        tasks.configure('filebeat_plugin.tests.example.yml', {})
+
+        dict1 = {
+            'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
+            'outputs': {'string': 'string', 'int': 10,
+                        'list': ['a', 'b', 'c']},
+            'paths': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']}
+        }
+        tasks.configure('filebeat_plugin.tests.example.yml', dict1)
         self.assertTrue(os.isfile(CONFIG_FILE))
         with open(CONFIG_FILE, "r") as stream:
             try:
