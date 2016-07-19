@@ -156,8 +156,7 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
     ctx.logger.info('Configuring filebeat...')
     dest_file = os.path.join(tempfile.gettempdir(), 'filebeat.yml')
     if filebeat_config_file:
-        ctx.download_resource_and_render(filebeat_config_file, target_path=dest_file,
-                                         template_variables=filebeat_config)
+        ctx.download_resource_and_render(filebeat_config_file, dest_file, filebeat_config)
     else:
         filebeat_config_file = pkg_resources.resource_string(
             filebeat_plugin.__name__, 'resources/filebeat.yml')
