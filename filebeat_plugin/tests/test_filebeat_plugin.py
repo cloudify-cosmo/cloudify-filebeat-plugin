@@ -22,7 +22,7 @@ import subprocess
 import yaml
 import distro
 from mock import patch
-from cloudify import utils
+from cloudify import manager
 
 from cloudify.mocks import MockCloudifyContext
 from .. import tasks
@@ -38,14 +38,28 @@ os.mkdir(TEMP_FILEBEAT)
 def mock_install_ctx():
     return MockCloudifyContext()
 
+def mock_get_resource_from_manager(resource_path, base_url=None):
+    """
+    Get resource from the manager file server.
+
+    :param resource_path: path to resource on the file server
+    :returns: resource content
+    """
+    if base_url is None:
+        base_url = utils.get_manager_file_server_url()
+    try:
+        url = '{0}/{1}'.format(base_url, resource_path)
+        response = urllib2.urlopen(url)
+        return response.read()
+    except urllib2.HTTPError as e:
+        raise HttpException(e.url, e.code, e.msg)
+
 
 class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
-    @patch('cloudify.utils.get_manager_file_server_blueprints_root_url', return_value='')
-    @patch('cloudify.manager.get_resource_from_manager', return_value='.')
     def test_configure_with_inputs_no_file(self, *args):
         '''validate configuration without file -
         rendered correctly and placed on the right place'''
@@ -117,8 +131,10 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
-    @patch('cloudify.utils.get_manager_file_server_blueprints_root_url', return_value='.')
-    @patch('cloudify.manager.get_resource_from_manager', return_value='.')
+    @patch('cloudify.utils.get_manager_file_server_blueprints_root_url',
+           return_value='')
+    @patch('cloudify.manager.get_resource_from_manager',
+           return_value=mock_get_resource_from_manager('example_with_inputs.yml'))
     def test_configure_with_inputs_and_file(self, *args):
         '''validate configuration with inputs and file
          rendered correctly and placed on the right place'''
@@ -139,8 +155,10 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
-    @patch('cloudify.utils.get_manager_file_server_blueprints_root_url', return_value='.')
-    @patch('cloudify.manager.get_resource_from_manager', return_value='.')
+    @patch('cloudify.utils.get_manager_file_server_blueprints_root_url',
+           return_value='')
+    @patch('cloudify.manager.get_resource_from_manager',
+           return_value=mock_get_resource_from_manager('example.yml'))
     def test_configure_with_file_without_inputs(self, *args):
         '''validate configuration with file without inputs
          rendered correctly and placed on the right place'''
