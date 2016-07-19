@@ -176,8 +176,8 @@ def _download_file(url, destination):
     try:
         filename = url.split('/')[-1]
     except:
-        print ('wrong url provided')
-        return -1
+        print ("wrong url provided! can't _download_file")
+        return None
     temp_dir = tempfile.gettempdir()
     local_filename = os.path.join(temp_dir, filename)
     response = requests.get(url, stream=True)
