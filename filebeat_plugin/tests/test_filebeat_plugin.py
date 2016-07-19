@@ -44,7 +44,7 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
-    @patch('cloudify.utils.get_manager_file_server_blueprints_root_url', return_value=True)
+    @patch('cloudify.utils.get_manager_file_server_blueprints_root_url', return_value='.')
     def test_configure_with_inputs_no_file(self, *args):
         '''validate configuration without file -
         rendered correctly and placed on the right place'''
@@ -116,7 +116,7 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
-    @patch('cloudify.utils.get_manager_file_server_blueprints_root_url', return_value=True)
+    @patch('cloudify.utils.get_manager_file_server_blueprints_root_url', return_value='.')
     def test_configure_with_inputs_and_file(self, *args):
         '''validate configuration with inputs and file
          rendered correctly and placed on the right place'''
@@ -137,7 +137,7 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
-    @patch('cloudify.utils.get_manager_file_server_blueprints_root_url', return_value=True)
+    @patch('cloudify.utils.get_manager_file_server_blueprints_root_url', return_value='.')
     def test_configure_with_file_without_inputs(self, *args):
         '''validate configuration with file without inputs
          rendered correctly and placed on the right place'''
