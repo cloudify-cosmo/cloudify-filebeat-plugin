@@ -66,7 +66,7 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('../tasks.ctx', mock_install_ctx())
+    @patch(tasks.ctx, mock_install_ctx())
     def test_configure_with_inputs_no_file(self):
         '''validate configuration was rendered correctly
         and placed on the right place - with file comprison'''
@@ -157,7 +157,7 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('tasks.ctx', mock_install_ctx())
+    @patch('../tasks.ctx', mock_install_ctx())
     def test_configure_with_file_without_inputs(self):
         '''validate configuration was rendered correctly and
          placed on the right place - with file comprison'''
@@ -171,7 +171,7 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('tasks.ctx', mock_install_ctx())
+    @patch('../tasks.ctx', mock_install_ctx())
     def test_download_filebeat(self):
         '''verify file exists after download'''
         filename = tasks.download_filebeat('', PATH)
@@ -183,7 +183,7 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('tasks.ctx', mock_install_ctx())
+    @patch('../tasks.ctx', mock_install_ctx())
     def test_download_file(self):
         '''verify file exists after download'''
         filename = tasks._download_file(
@@ -195,7 +195,7 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('tasks.ctx', mock_install_ctx())
+    @patch('../tasks.ctx', mock_install_ctx())
     def test_download_file_failed(self):
         '''verify nothing downloaded'''
         filename = tasks._download_file(None, None)
@@ -204,7 +204,7 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('tasks.ctx', mock_install_ctx())
+    @patch('../tasks.ctx', mock_install_ctx())
     def test_install_service(self):
         '''verify service is available after installation -
          installation file is provided'''
