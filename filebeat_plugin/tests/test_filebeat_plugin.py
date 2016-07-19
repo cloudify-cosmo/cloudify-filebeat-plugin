@@ -47,6 +47,8 @@ class TestFilebeatPlugin(unittest.TestCase):
     def test_configure_with_inputs_no_file(self):
         '''validate configuration without file -
         rendered correctly and placed on the right place'''
+        print(TEMP_FILEBEAT)
+        print(CONFIG_FILE)
         dict1 = {
             'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
             'outputs': {'string': 'string', 'int': 10,
@@ -168,6 +170,7 @@ class TestFilebeatPlugin(unittest.TestCase):
             'filebeat_1.2.3_amd64.deb',
             PATH)
         self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
+        print(filename)
         self.assertTrue(os.isfile(filename))
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
