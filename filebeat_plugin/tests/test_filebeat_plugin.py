@@ -66,7 +66,7 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch(tasks.ctx, mock_install_ctx())
+    @patch('../tasks.ctx', mock_install_ctx())
     def test_configure_with_inputs_no_file(self):
         '''validate configuration was rendered correctly
         and placed on the right place - with file comprison'''
