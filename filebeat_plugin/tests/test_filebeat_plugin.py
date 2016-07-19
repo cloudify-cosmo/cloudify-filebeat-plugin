@@ -45,8 +45,8 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_configure_with_inputs_no_file(self):
-        '''validate configuration was rendered correctly
-        and placed on the right place - with file comprison'''
+        '''validate configuration without file -
+        rendered correctly and placed on the right place'''
         dict1 = {
             'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
             'outputs': {'string': 'string', 'int': 10,
@@ -116,8 +116,8 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_configure_with_inputs_and_file(self):
-        '''validate configuration was rendered correctly and
-         placed on the right place - with file comprison'''
+        '''validate configuration with inputs and file
+         rendered correctly and placed on the right place'''
         dict1 = {
             'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
             'outputs': {'string': 'string', 'int': 10,
@@ -136,8 +136,8 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_configure_with_file_without_inputs(self):
-        '''validate configuration was rendered correctly and
-         placed on the right place - with file comprison'''
+        '''validate configuration with file without inputs
+         rendered correctly and placed on the right place'''
         tasks.configure('example.yml', '')
         self.assertTrue(os.isfile(CONFIG_FILE))
         with open(CONFIG_FILE, "r") as stream:
@@ -150,7 +150,7 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_download_filebeat(self):
-        '''verify file exists after download'''
+        '''test download_filebeat function'''
         filename = tasks.download_filebeat('', PATH)
         if distro in ('ubuntu', 'debian'):
             self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
@@ -162,7 +162,7 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_download_file(self):
-        '''verify file exists after download'''
+        '''test download - verify file exists after download'''
         filename = tasks._download_file(
             'https://download.elastic.co/beats/filebeat/' +
             'filebeat_1.2.3_amd64.deb',
@@ -174,7 +174,7 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_download_file_failed(self):
-        '''verify nothing downloaded'''
+        '''test download -verify nothing downloaded'''
         filename = tasks._download_file(None, None)
         self.assertEqual(filename, None)
         self.assertFalse(os.isfile(filename))
