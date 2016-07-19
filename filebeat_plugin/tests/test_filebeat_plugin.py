@@ -63,9 +63,9 @@ def _create_mock_context(install_node_props,
 
 
 class TestFilebeatPlugin(unittest.TestCase):
-
-    @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    #
+    # @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
+    # @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('../tasks.ctx', mock_install_ctx())
     def test_configure_with_inputs_no_file(self):
         '''validate configuration was rendered correctly
@@ -135,8 +135,8 @@ class TestFilebeatPlugin(unittest.TestCase):
                 raise AssertionError(exc)
         self.assertNotIn('error', output)
 
-    @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    # @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
+    # @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('../tasks.ctx', mock_install_ctx())
     def test_configure_with_inputs_and_file(self):
         '''validate configuration was rendered correctly and
@@ -155,8 +155,8 @@ class TestFilebeatPlugin(unittest.TestCase):
             except yaml.YAMLError, exc:
                 raise AssertionError(exc)
 
-    @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    # @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
+    # @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('../tasks.ctx', mock_install_ctx())
     def test_configure_with_file_without_inputs(self):
         '''validate configuration was rendered correctly and
@@ -168,9 +168,9 @@ class TestFilebeatPlugin(unittest.TestCase):
                 yaml.load(stream)
             except yaml.YAMLError, exc:
                 raise AssertionError(exc)
-
-    @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    #
+    # @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
+    # @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('../tasks.ctx', mock_install_ctx())
     def test_download_filebeat(self):
         '''verify file exists after download'''
@@ -181,8 +181,8 @@ class TestFilebeatPlugin(unittest.TestCase):
             self.assertEqual(filename, 'filebeat-1.2.3-x86_64.rpm')
         self.assertTrue(os.isfile(os.path.join(PATH, filename)))
 
-    @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    # @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
+    # @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('../tasks.ctx', mock_install_ctx())
     def test_download_file(self):
         '''verify file exists after download'''
@@ -193,8 +193,8 @@ class TestFilebeatPlugin(unittest.TestCase):
         self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
         self.assertTrue(os.isfile(filename))
 
-    @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    # @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
+    # @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('../tasks.ctx', mock_install_ctx())
     def test_download_file_failed(self):
         '''verify nothing downloaded'''
@@ -202,8 +202,8 @@ class TestFilebeatPlugin(unittest.TestCase):
         self.assertEqual(filename, None)
         self.assertFalse(os.isfile(filename))
 
-    @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    # @patch('../tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
+    # @patch('../tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('../tasks.ctx', mock_install_ctx())
     def test_install_service(self):
         '''verify service is available after installation -
