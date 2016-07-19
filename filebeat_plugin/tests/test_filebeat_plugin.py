@@ -158,7 +158,7 @@ class TestFilebeatPlugin(unittest.TestCase):
             self.assertEqual(filename, 'filebeat-1.2.3-x86_64.rpm')
         self.assertTrue(os.isfile(os.path.join(PATH, filename)))
 
-    @patch('filebeat_plugin.tasks.FILEBEAT_CONF_FILE_DEFAULT', CONFIG_FILE)
+    @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_download_file(self):

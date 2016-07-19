@@ -173,7 +173,10 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
 
 
 def _download_file(url, destination):
-    filename = url.split('/')[-1]
+    try:
+        filename = url.split('/')[-1]
+    except:
+        raise ('wrong url provided')
     temp_dir = tempfile.gettempdir()
     local_filename = os.path.join(temp_dir, filename)
     response = requests.get(url, stream=True)
