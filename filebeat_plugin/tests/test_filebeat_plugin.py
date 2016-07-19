@@ -38,21 +38,9 @@ os.mkdir(TEMP_FILEBEAT)
 def mock_install_ctx():
     return MockCloudifyContext()
 
-def mock_get_resource_from_manager(resource_path, base_url=None):
-    """
-    Get resource from the manager file server.
-
-    :param resource_path: path to resource on the file server
-    :returns: resource content
-    """
-    if base_url is None:
-        base_url = utils.get_manager_file_server_url()
-    try:
-        url = '{0}/{1}'.format(base_url, resource_path)
-        response = urllib2.urlopen(url)
-        return response.read()
-    except urllib2.HTTPError as e:
-        raise HttpException(e.url, e.code, e.msg)
+def mock_get_resource_from_manager(resource_path):
+    with open(resource_path) as f:
+        return f.read()
 
 
 class TestFilebeatPlugin(unittest.TestCase):
