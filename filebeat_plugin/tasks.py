@@ -164,7 +164,6 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
         configuration = jinja2.Template(filebeat_config_file_temp)
         filebeat_config_file = os.path.join(tempfile.gettempdir(),
                                             'filebeat.yml')
-        ctx.logger.info(filebeat_config_file)
         with open(filebeat_config_file, 'w') as f:
             f.write(configuration.render(filebeat_config))
     _run('sudo mv {0} {1}'.format(filebeat_config_file,
