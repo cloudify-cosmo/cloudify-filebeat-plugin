@@ -91,7 +91,7 @@ class TestFilebeatPlugin(unittest.TestCase):
             'paths': {'string': 'string', 'int': 10, 'list': None}
         }
         tasks.configure('', dict3)
-        with open(CONFIG_FILE, "r") as stream:
+        with open(CONFIG_FILE) as stream:
             try:
                 yaml.load(stream)
             except yaml.YAMLError, exc:
@@ -105,33 +105,32 @@ class TestFilebeatPlugin(unittest.TestCase):
             'paths': '',
         }
         tasks.configure('', dict4)
-        with open(CONFIG_FILE, "r") as stream:
+        with open(CONFIG_FILE) as stream:
             try:
                 yaml.load(stream)
             except yaml.YAMLError, exc:
                 raise AssertionError(exc)
         self.assertNotIn('error', output)
 
-# think if needed
-# @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-# @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
-# @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
-# def test_configure_with_inputs_and_file(self):
-#     '''validate configuration with inputs and file
-#      rendered correctly and placed on the right place'''
-#     dict1 = {
-#         'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
-#         'outputs': {'string': 'string', 'int': 10,
-#                     'list': ['a', 'b', 'c']},
-#     }
-#
-#     tasks.configure('filebeat_plugin.tests.example_with_inputs.yml', dict1)
-#     self.assertTrue(os.isfile(CONFIG_FILE))
-#     with open(CONFIG_FILE, "r") as stream:
-#         try:
-#             yaml.load(stream)
-#         except yaml.YAMLError, exc:
-#             raise AssertionError(exc)
+    @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
+    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
+    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
+    def test_configure_with_inputs_and_file(self):
+        '''validate configuration with inputs and file
+         rendered correctly and placed on the right place'''
+        dict1 = {
+            'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
+            'outputs': {'string': 'string', 'int': 10,
+                        'list': ['a', 'b', 'c']},
+        }
+
+        tasks.configure('filebeat_plugin.tests.example_with_inputs.yml', dict1)
+        self.assertTrue(os.isfile(CONFIG_FILE))
+        with open(CONFIG_FILE) as stream:
+            try:
+                yaml.load(stream)
+            except yaml.YAMLError, exc:
+                raise AssertionError(exc)
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
@@ -140,15 +139,9 @@ class TestFilebeatPlugin(unittest.TestCase):
         '''validate configuration with file without inputs
          rendered correctly and placed on the right place'''
 
-        dict1 = {
-            'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
-            'outputs': {'string': 'string', 'int': 10,
-                        'list': ['a', 'b', 'c']},
-            'paths': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']}
-        }
-        tasks.configure('filebeat_plugin.tests.example.yml', dict1)
+        tasks.configure('filebeat_plugin.tests.example.yml', None)
         self.assertTrue(os.isfile(CONFIG_FILE))
-        with open(CONFIG_FILE, "r") as stream:
+        with open(CONFIG_FILE) as stream:
             try:
                 yaml.load(stream)
             except yaml.YAMLError, exc:

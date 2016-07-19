@@ -154,20 +154,18 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
     Rendering your inputs/outputs definitions.
     """
     ctx.logger.info('Configuring filebeat...')
-
+    dest_file = os.path.join(tempfile.gettempdir(), 'filebeat.yml')
     if filebeat_config_file:
-        ctx.download_resource_and_render(filebeat_config_file,
+        ctx.download_resource_and_render(filebeat_config_file, dest_file,
                                          template_variables=filebeat_config)
     else:
-        filebeat_config_file_temp = pkg_resources.resource_string(
+        filebeat_config_file = pkg_resources.resource_string(
             filebeat_plugin.__name__, 'resources/filebeat.yml')
-        configuration = jinja2.Template(filebeat_config_file_temp)
-        filebeat_config_file = os.path.join(tempfile.gettempdir(),
-                                            'filebeat.yml')
-        with open(filebeat_config_file, 'w') as f:
+        configuration = jinja2.Template(filebeat_config_file)
+        with open(dest_file, 'w') as f:
             f.write(configuration.render(filebeat_config))
-    _run('sudo mv {0} {1}'.format(filebeat_config_file,
-                                  FILEBEAT_CONFIG_FILE_DEFAULT))
+
+    _run('sudo mv {0} {1}'.format(dest_file, FILEBEAT_CONFIG_FILE_DEFAULT))
     ctx.logger.info('filebeat was configured...')
 
 
