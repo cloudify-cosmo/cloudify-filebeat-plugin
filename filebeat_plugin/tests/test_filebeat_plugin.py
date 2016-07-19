@@ -124,7 +124,7 @@ class TestFilebeatPlugin(unittest.TestCase):
                         'list': ['a', 'b', 'c']},
         }
 
-        tasks.configure('filebeat_plugin.tests.example_with_inputs.yml', dict1)
+        tasks.configure('example_with_inputs.yml', dict1)
         self.assertTrue(os.isfile(CONFIG_FILE))
         with open(CONFIG_FILE) as stream:
             try:
@@ -139,7 +139,7 @@ class TestFilebeatPlugin(unittest.TestCase):
         '''validate configuration with file without inputs
          rendered correctly and placed on the right place'''
 
-        tasks.configure('filebeat_plugin.tests.example.yml', None)
+        tasks.configure('example.yml', None)
         self.assertTrue(os.isfile(CONFIG_FILE))
         with open(CONFIG_FILE) as stream:
             try:
