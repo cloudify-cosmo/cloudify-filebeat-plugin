@@ -36,14 +36,13 @@ os.mkdir(TEMP_FILEBEAT)
 
 
 def mock_install_ctx():
-    return MockCloudifyContext(node_id='fb_node',
-                               service='filebeat')
+    return MockCloudifyContext()
 
 
 class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('filebeat_plugin.tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_configure_with_inputs_no_file(self):
         '''validate configuration was rendered correctly
@@ -114,7 +113,7 @@ class TestFilebeatPlugin(unittest.TestCase):
         self.assertNotIn('error', output)
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('filebeat_plugin.tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_configure_with_inputs_and_file(self):
         '''validate configuration was rendered correctly and
@@ -134,7 +133,7 @@ class TestFilebeatPlugin(unittest.TestCase):
                 raise AssertionError(exc)
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('filebeat_plugin.tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_configure_with_file_without_inputs(self):
         '''validate configuration was rendered correctly and
@@ -148,7 +147,7 @@ class TestFilebeatPlugin(unittest.TestCase):
                 raise AssertionError(exc)
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('filebeat_plugin.tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_download_filebeat(self):
         '''verify file exists after download'''
@@ -159,8 +158,8 @@ class TestFilebeatPlugin(unittest.TestCase):
             self.assertEqual(filename, 'filebeat-1.2.3-x86_64.rpm')
         self.assertTrue(os.isfile(os.path.join(PATH, filename)))
 
-    @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('filebeat_plugin.tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    @patch('filebeat_plugin.tasks.FILEBEAT_CONF_FILE_DEFAULT', CONFIG_FILE)
+    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_download_file(self):
         '''verify file exists after download'''
@@ -172,7 +171,7 @@ class TestFilebeatPlugin(unittest.TestCase):
         self.assertTrue(os.isfile(filename))
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('filebeat_plugin.tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_download_file_failed(self):
         '''verify nothing downloaded'''
@@ -181,7 +180,7 @@ class TestFilebeatPlugin(unittest.TestCase):
         self.assertFalse(os.isfile(filename))
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('filebeat_plugin.tasks.FILEBEAT_INSTALL_PATH_DEFAULT', TEMP_FILEBEAT)
+    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_install_service(self):
         '''verify service is available after installation -

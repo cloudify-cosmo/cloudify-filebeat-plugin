@@ -45,7 +45,7 @@ import filebeat_plugin
 distro = distro.id()
 FILEBEAT_CONFIG_FILE_DEFAULT = os.path.join(
     '/', 'etc', 'filebeat', 'filebeat.yml')
-FILEBEAT_INSTALL_PATH_DEFAULT = os.path.join('/', 'opt', 'filebeat')
+FILEBEAT_PATH_DEFAULT = os.path.join('/', 'opt', 'filebeat')
 
 
 @operation
@@ -64,7 +64,7 @@ def install(filebeat_config_inputs,
         raise exceptions.NonRecoverableError(
             'Error! filebeat-plugin is available on linux distribution only')
     if not filebeat_install_path:
-        filebeat_install_path = FILEBEAT_INSTALL_PATH_DEFAULT
+        filebeat_install_path = FILEBEAT_PATH_DEFAULT
     ctx.instance.runtime_properties[
         'filebeat_install_path'] = filebeat_install_path
     if os.path.isfile(filebeat_install_path):
