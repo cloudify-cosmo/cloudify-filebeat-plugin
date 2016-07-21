@@ -52,10 +52,12 @@ class TestFilebeatPlugin(unittest.TestCase):
         '''validate configuration without file -
         rendered correctly and placed on the right place'''
         dict1 = {
-            'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
-            'outputs': {'string': 'string', 'int': 10,
-                        'list': ['a', 'b', 'c']},
-            'paths': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']}
+            'inputs': {'a': {'string': 'string'}, 'b': {'int': 10},
+                       'c': {'list': ['a', 'b', 'c']}},
+            'outputs': {'a': {'string': 'string'}, 'b': {'int': 10},
+                        'c': {'list': ['a', 'b', 'c']}},
+            'paths': {'a': {'string': 'string'}, 'b': {'int': 10},
+                      'c': {'list': ['a', 'b', 'c']}}
         }
         tasks.configure('', dict1)
         self.assertTrue(os.path.exists(CONFIG_FILE))
@@ -72,10 +74,12 @@ class TestFilebeatPlugin(unittest.TestCase):
 
         dict2 = {
             'inputs': None,
-            'outputs': {'string': 'string', 'int': None, 'list': ['a',
-                                                                  'b',
-                                                                  'c']},
-            'paths': {'string': 'string', 'int': 10, 'list': None}
+            'outputs': {'a': {'string': 'string'},
+                        'b': None,
+                        'c': {'list': ['a', 'b', 'c']}},
+            'paths': {'a': {'string': 'string'},
+                      'b': {'int': 10},
+                      'c': {'list': None}}
         }
         tasks.configure('', dict2)
         with open(CONFIG_FILE) as stream:
@@ -90,9 +94,11 @@ class TestFilebeatPlugin(unittest.TestCase):
         self.assertNotIn('error', output)
 
         dict3 = {
-            'inputs': {'string': None, 'int': 10, 'list': ['a', 'b', 'c']},
+            'inputs': {'a': None, 'b': {'int': 10},
+                       'c': {'list': ['a', 'b', 'c']}},
             'outputs': None,
-            'paths': {'string': 'string', 'int': 10, 'list': None}
+            'paths': {'a': {'string': 'string'}, 'b': None,
+                      'c': {'list': ['a', 'b', 'c']}}
         }
         tasks.configure('', dict3)
         with open(CONFIG_FILE) as stream:
@@ -105,7 +111,8 @@ class TestFilebeatPlugin(unittest.TestCase):
         dict4 = {
             'inputs': {'string': 'string', 'int': None,
                        'list': ['a', 'b', 'c']},
-            'outputs': {'string': None, 'int': 10, 'list': ['a', 'b', 'c']},
+            'outputs': {'a': {'string': None},
+                        'b': {'int': 10, 'list': ['a', 'b', 'c']}},
             'paths': '',
         }
         tasks.configure('', dict4)
@@ -128,9 +135,10 @@ class TestFilebeatPlugin(unittest.TestCase):
         '''validate configuration with inputs and file
          rendered correctly and placed on the right place'''
         dict1 = {
-            'inputs': {'string': 'string', 'int': 10, 'list': ['a', 'b', 'c']},
-            'outputs': {'string': 'string', 'int': 10,
-                        'list': ['a', 'b', 'c']},
+            'inputs': {'a': {'string': 'string'}, 'b': {'int': 10},
+                       'c': {'list': ['a', 'b', 'c']}},
+            'outputs': {'a': {'string': 'string'}, 'b': {'int': 10},
+                        'c': {'list': ['a', 'b', 'c']}},
         }
 
         tasks.configure(os.path.join(
@@ -154,8 +162,8 @@ class TestFilebeatPlugin(unittest.TestCase):
         '''validate configuration with file without inputs
          rendered correctly and placed on the right place'''
 
-        tasks.configure(os.path.join('filebeat_plugin',
-                                     'tests', 'example.yml'), None)
+        tasks.configure(os.path.join(
+            'filebeat_plugin', 'tests', 'example.yml'), None)
         self.assertTrue(os.path.exists(CONFIG_FILE))
         with open(CONFIG_FILE) as stream:
             try:
@@ -192,9 +200,7 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_download_file_failed(self):
         '''test download - verify nothing downloaded'''
-        filename = tasks._download_file(None, None)
-        self.assertEqual(filename, None)
-        # self.assertFalse(os.path.exists(filename))
+        self.assertRaises(TypeError, tasks._download_file(None, None))
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)

@@ -156,13 +156,21 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
     ctx.logger.info('Configuring filebeat...')
     dest_file = os.path.join(tempfile.gettempdir(), 'filebeat.yml')
     if filebeat_config_file:
-        ctx.download_resource_and_render(filebeat_config_file, dest_file, filebeat_config)
+        try:
+            ctx.download_resource_and_render(filebeat_config_file,
+                                            dest_file,
+                                            filebeat_config)
+        except:
+            raise "wrong inputs prodided! can't redner configuration file"
     else:
         filebeat_config_file = pkg_resources.resource_string(
             filebeat_plugin.__name__, 'resources/filebeat.yml')
         configuration = jinja2.Template(filebeat_config_file)
-        with open(dest_file, 'w') as f:
-            f.write(configuration.render(filebeat_config))
+        try:
+            with open(dest_file, 'w') as f:
+                f.write(configuration.render(filebeat_config))
+        except:
+            raise "wrong inputs prodided! can't redner configuration file"
 
     _run('sudo mv {0} {1}'.format(dest_file, FILEBEAT_CONFIG_FILE_DEFAULT))
     ctx.logger.info('filebeat was configured...')
@@ -172,8 +180,7 @@ def _download_file(url, destination):
     try:
         filename = url.split('/')[-1]
     except:
-        ctx.logger.info("wrong url provided! can't _download_file")
-        return None
+        raise ("wrong url provided! can't _download_file")
     temp_dir = tempfile.gettempdir()
     local_filename = os.path.join(temp_dir, filename)
     response = requests.get(url, stream=True)
