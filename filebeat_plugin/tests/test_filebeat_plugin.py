@@ -51,15 +51,21 @@ class TestFilebeatPlugin(unittest.TestCase):
     def test_configure_with_inputs_no_file(self, *args):
         '''validate configuration without file -
         rendered correctly and placed on the right place'''
-        dict1 = {
-            'inputs': {'a': {'string': 'string'}, 'b': {'int': 10},
-                       'c': {'list': ['a', 'b', 'c']}},
-            'outputs': {'a': {'string': 'string'}, 'b': {'int': 10},
-                        'c': {'list': ['a', 'b', 'c']}},
-            'paths': {'a': {'string': 'string'}, 'b': {'int': 10},
-                      'c': {'list': ['a', 'b', 'c']}}
+        dict1_valid = {
+            'inputs': {'shipper': None,
+                       'looging': {'rotateeverybytes': 10485760}},
+            'outputs': {'logstash':
+                        {'hosts': ['http://localhost:5044'],
+                         'bulk_max_size': 10,
+                         'index': 'filebeat'},
+                        'elasticsearch':
+                        {'hosts': ['http://localhost:9200'],
+                         'path': 'filebeat.template.json'}},
+            'paths': {'syslog': ['/var/log/syslog', '/var/log/auth.log'],
+                      'nginx-access': ['/var/log/nginx/*.log']}
         }
-        tasks.configure('', dict1)
+
+        tasks.configure('', dict1_valid)
         self.assertTrue(os.path.exists(CONFIG_FILE))
         with open(CONFIG_FILE) as stream:
             try:
@@ -72,7 +78,7 @@ class TestFilebeatPlugin(unittest.TestCase):
                                           '-configtest'])
         self.assertNotIn('error', output)
 
-        dict2 = {
+        dict2_unvalid = {
             'inputs': None,
             'outputs': {'a': {'string': 'string'},
                         'b': None,
@@ -81,47 +87,41 @@ class TestFilebeatPlugin(unittest.TestCase):
                       'b': {'int': 10},
                       'c': {'list': None}}
         }
-        tasks.configure('', dict2)
+        self.assertRaises(ValueError, tasks.configure, '', dict2_unvalid)
         with open(CONFIG_FILE) as stream:
             try:
                 yaml.load(stream)
             except yaml.YAMLError, exc:
                 raise AssertionError(exc)
-        # output = subprocess.check_output(['filebeat',
-        #                                   '-c',
-        #                                   CONFIG_FILE,
-        #                                   '-configtest'])
-        # self.assertNotIn('error', output)
 
-        dict3 = {
+        dict3_unvalid = {
             'inputs': {'a': None, 'b': {'int': 10},
                        'c': {'list': ['a', 'b', 'c']}},
             'outputs': None,
             'paths': {'a': {'string': 'string'}, 'b': None,
                       'c': {'list': ['a', 'b', 'c']}}
         }
-        tasks.configure('', dict3)
+        self.assertRaises(ValueError, tasks.configure, '', dict3_unvalid)
         with open(CONFIG_FILE) as stream:
             try:
                 yaml.load(stream)
             except yaml.YAMLError, exc:
                 raise AssertionError(exc)
-        # self.assertNotIn('error', output)
 
-        dict4 = {
+        dict4_unvalid = {
             'inputs': {'string': 'string', 'int': None,
                        'list': ['a', 'b', 'c']},
             'outputs': {'a': {'string': None},
                         'b': {'int': 10, 'list': ['a', 'b', 'c']}},
             'paths': '',
         }
-        tasks.configure('', dict4)
+        self.assertRaises(ValueError, tasks.configure, '', dict4_unvalid)
         with open(CONFIG_FILE) as stream:
             try:
                 yaml.load(stream)
             except yaml.YAMLError, exc:
                 raise AssertionError(exc)
-        # self.assertNotIn('error', output)
+
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
@@ -134,15 +134,23 @@ class TestFilebeatPlugin(unittest.TestCase):
     def test_configure_with_inputs_and_file(self, *args):
         '''validate configuration with inputs and file
          rendered correctly and placed on the right place'''
-        dict1 = {
-            'inputs': {'a': {'string': 'string'}, 'b': {'int': 10},
-                       'c': {'list': ['a', 'b', 'c']}},
-            'outputs': {'a': {'string': 'string'}, 'b': {'int': 10},
-                        'c': {'list': ['a', 'b', 'c']}},
+        dict1_valid = {
+            'inputs': {'shipper': None,
+                       'looging': {'rotateeverybytes': 10485760}},
+            'outputs': {'logstash':
+                        {'hosts': ['http://localhost:5044'],
+                         'bulk_max_size': 10,
+                         'index': 'filebeat'},
+                        'elasticsearch':
+                        {'hosts': ['http://localhost:9200'],
+                         'path': 'filebeat.template.json'}},
+            'paths': {'syslog': ['/var/log/syslog', '/var/log/auth.log'],
+                      'nginx-access': ['/var/log/nginx/*.log']}
         }
 
-        tasks.configure(os.path.join(
-            'filebeat_plugin', 'tests', 'example_with_inputs.yml'), dict1)
+        tasks.configure(os.path.join('filebeat_plugin',
+                                     'tests',
+                                     'example_with_inputs.yml'), dict1_valid)
         self.assertTrue(os.path.exists(CONFIG_FILE))
         with open(CONFIG_FILE) as stream:
             try:
