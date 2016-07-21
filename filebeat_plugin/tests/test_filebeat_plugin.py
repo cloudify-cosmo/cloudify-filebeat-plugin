@@ -199,7 +199,7 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_download_file_failed(self):
         '''test download - verify nothing downloaded'''
-        self.assertRaises(AttributeError, tasks._download_file(None, None))
+        self.assertRaises(AttributeError, tasks._download_file, None, None)
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
