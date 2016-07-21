@@ -161,7 +161,6 @@ class TestFilebeatPlugin(unittest.TestCase):
     def test_configure_with_file_without_inputs(self, *args):
         '''validate configuration with file without inputs
          rendered correctly and placed on the right place'''
-
         tasks.configure(os.path.join(
             'filebeat_plugin', 'tests', 'example.yml'), None)
         self.assertTrue(os.path.exists(CONFIG_FILE))
