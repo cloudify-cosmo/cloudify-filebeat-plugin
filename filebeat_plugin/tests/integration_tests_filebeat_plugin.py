@@ -48,6 +48,21 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
+    def test_install_service(self):
+        '''verify service is available after installation -
+         installation file is provided'''
+        if distro in ('ubuntu', 'debian'):
+            tasks.install_filebeat('filebeat_1.2.3_amd64.deb', PATH)
+            output = subprocess.check_output(['dpkg', '-l', 'filebeat'])
+            self.assertIn('filebeat', output)
+        elif distro in ('centos', 'redhat'):
+            tasks.install_filebeat('filebeat-1.2.3-x86_64.rpm', PATH)
+            output = subprocess.check_output(['rpm', '-qa'])
+            self.assertIn('filebeat', output)
+
+    @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
+    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
+    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_configure_with_inputs_no_file(self, *args):
         '''validate configuration without file -
         rendered correctly and placed on the right place'''
@@ -55,12 +70,12 @@ class TestFilebeatPlugin(unittest.TestCase):
             'inputs': {'shipper': None,
                        'looging': {'rotateeverybytes': 10485760}},
             'outputs': {'logstash':
-                        {'hosts': ['http://localhost:5044'],
-                         'bulk_max_size': 10,
-                         'index': 'filebeat'},
+                            {'hosts': ['http://localhost:5044'],
+                             'bulk_max_size': 10,
+                             'index': 'filebeat'},
                         'elasticsearch':
-                        {'hosts': ['http://localhost:9200'],
-                         'path': 'filebeat.template.json'}},
+                            {'hosts': ['http://localhost:9200'],
+                             'path': 'filebeat.template.json'}},
             'paths': {'syslog': ['/var/log/syslog', '/var/log/auth.log'],
                       'nginx-access': ['/var/log/nginx/*.log']}
         }
@@ -77,6 +92,11 @@ class TestFilebeatPlugin(unittest.TestCase):
                                           CONFIG_FILE,
                                           '-configtest'])
         self.assertNotIn('error', output)
+
+    @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
+    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
+    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
+    def test_failed_configure(self, *args):
 
         dict2_unvalid = {
             'inputs': None,
@@ -117,10 +137,7 @@ class TestFilebeatPlugin(unittest.TestCase):
         }
         self.assertRaises(ValueError, tasks.configure, '', dict4_unvalid)
         with open(CONFIG_FILE) as stream:
-            try:
-                yaml.load(stream)
-            except yaml.YAMLError, exc:
-                raise AssertionError(exc)
+            raise AssertionError(exc)
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
@@ -137,12 +154,12 @@ class TestFilebeatPlugin(unittest.TestCase):
             'inputs': {'shipper': None,
                        'looging': {'rotateeverybytes': 10485760}},
             'outputs': {'logstash':
-                        {'hosts': ['http://localhost:5044'],
-                         'bulk_max_size': 10,
-                         'index': 'filebeat'},
+                            {'hosts': ['http://localhost:5044'],
+                             'bulk_max_size': 10,
+                             'index': 'filebeat'},
                         'elasticsearch':
-                        {'hosts': ['http://localhost:9200'],
-                         'path': 'filebeat.template.json'}},
+                            {'hosts': ['http://localhost:9200'],
+                             'path': 'filebeat.template.json'}},
             'paths': {'syslog': ['/var/log/syslog', '/var/log/auth.log'],
                       'nginx-access': ['/var/log/nginx/*.log']}
         }
@@ -177,48 +194,3 @@ class TestFilebeatPlugin(unittest.TestCase):
             except yaml.YAMLError, exc:
                 raise AssertionError(exc)
 
-    @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
-    def test_download_filebeat(self):
-        '''test download_filebeat function'''
-        filename = tasks.download_filebeat('', TEMP_FILEBEAT)
-        if distro in ('ubuntu', 'debian'):
-            self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
-        elif distro in ('centos', 'redhat'):
-            self.assertEqual(filename, 'filebeat-1.2.3-x86_64.rpm')
-        self.assertTrue(os.path.exists(os.path.join(TEMP_FILEBEAT, filename)))
-
-    @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
-    def test_download_file(self):
-        '''test download -  verify file exists after download'''
-        filename = tasks._download_file(
-            'https://download.elastic.co/beats/filebeat/' +
-            'filebeat_1.2.3_amd64.deb',
-            PATH)
-        self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
-        self.assertTrue(os.path.exists(filename))
-
-    @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
-    def test_download_file_failed(self):
-        '''test download - verify nothing downloaded'''
-        self.assertRaises(ValueError, tasks._download_file, None, None)
-
-    @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
-    def test_install_service(self):
-        '''verify service is available after installation -
-         installation file is provided'''
-        if distro in ('ubuntu', 'debian'):
-            tasks.install_filebeat('filebeat_1.2.3_amd64.deb', PATH)
-            output = subprocess.check_output(['dpkg', '-l', 'filebeat'])
-            self.assertIn('filebeat', output)
-        elif distro in ('centos', 'redhat'):
-            tasks.install_filebeat('filebeat-1.2.3-x86_64.rpm', PATH)
-            output = subprocess.check_output(['rpm', '-qa'])
-            self.assertIn('filebeat', output)
