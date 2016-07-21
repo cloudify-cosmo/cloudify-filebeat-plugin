@@ -122,7 +122,9 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('cloudify.utils.get_manager_file_server_blueprints_root_url',
            return_value='')
     @patch('cloudify.manager.get_resource_from_manager',
-           return_value=mock_get_resource_from_manager('filebeat_plugin.tests.example_with_inputs.yml'))
+           return_value=mock_get_resource_from_manager(
+               os.path.join('cloudify-filebeat-plugin',
+                            'filebeat_plugin', 'tests', 'example_with_inputs.yml')))
     def test_configure_with_inputs_and_file(self, *args):
         '''validate configuration with inputs and file
          rendered correctly and placed on the right place'''
@@ -132,7 +134,8 @@ class TestFilebeatPlugin(unittest.TestCase):
                         'list': ['a', 'b', 'c']},
         }
 
-        tasks.configure('example_with_inputs.yml', dict1)
+        tasks.configure(os.path.join(
+            'cloudify-filebeat-plugin', 'filebeat_plugin', 'tests', 'example_with_inputs.yml'), dict1)
         self.assertTrue(os.path.exists(CONFIG_FILE))
         with open(CONFIG_FILE) as stream:
             try:
@@ -146,12 +149,15 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('cloudify.utils.get_manager_file_server_blueprints_root_url',
            return_value='')
     @patch('cloudify.manager.get_resource_from_manager',
-           return_value=mock_get_resource_from_manager('filebeat_plugin.tests.example.yml'))
+           return_value=mock_get_resource_from_manager(
+               os.path.join('cloudify-filebeat-plugin',
+                            'filebeat_plugin', 'tests', 'example.yml')))
     def test_configure_with_file_without_inputs(self, *args):
         '''validate configuration with file without inputs
          rendered correctly and placed on the right place'''
 
-        tasks.configure('example.yml', None)
+        tasks.configure(os.path.join(
+            'cloudify-filebeat-plugin', 'filebeat_plugin', 'tests', 'example.yml'), None)
         self.assertTrue(os.path.exists(CONFIG_FILE))
         with open(CONFIG_FILE) as stream:
             try:
