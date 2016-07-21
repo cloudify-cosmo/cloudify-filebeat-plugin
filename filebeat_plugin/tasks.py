@@ -175,7 +175,8 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
                 "wrong inputs prodided! can't redner configuration file")
     _run('sudo mv {0} {1}'.format(dest_file, FILEBEAT_CONFIG_FILE_DEFAULT))
     try:
-        _run('filebeat -c {0} -configtest'.format(FILEBEAT_CONFIG_FILE_DEFAULT))
+        _run('filebeat -c {0} -configtest'.format(
+             FILEBEAT_CONFIG_FILE_DEFAULT))
     except:
         raise ValueError(
             "wrong inputs prodided! configuration file is unvalid")

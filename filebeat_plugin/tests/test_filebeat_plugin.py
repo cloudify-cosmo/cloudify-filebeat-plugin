@@ -122,7 +122,6 @@ class TestFilebeatPlugin(unittest.TestCase):
             except yaml.YAMLError, exc:
                 raise AssertionError(exc)
 
-
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
