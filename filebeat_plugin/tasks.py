@@ -158,8 +158,8 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
     if filebeat_config_file:
         try:
             ctx.download_resource_and_render(filebeat_config_file,
-                                            dest_file,
-                                            filebeat_config)
+                                             dest_file,
+                                             filebeat_config)
         except:
             print("wrong inputs prodided! can't redner configuration file")
             raise
