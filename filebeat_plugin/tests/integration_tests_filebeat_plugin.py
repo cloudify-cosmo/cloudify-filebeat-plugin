@@ -32,7 +32,6 @@ distro = distro.id()
 PATH = os.path.dirname(__file__)
 TEMP_FILEBEAT = os.path.join(tempfile.gettempdir(), 'filebeat')
 CONFIG_FILE = os.path.join(TEMP_FILEBEAT, 'filebeat.yml')
-os.mkdir(TEMP_FILEBEAT)
 
 
 def mock_install_ctx():
@@ -57,6 +56,8 @@ class TestFilebeatPlugin(unittest.TestCase):
     def test_install_service(self):
         '''verify service is available after installation -
          installation file is provided'''
+        os.mkdir(TEMP_FILEBEAT)
+
         if distro in ('ubuntu', 'debian'):
             tasks.install_filebeat('filebeat_1.2.3_amd64.deb', PATH)
             output = subprocess.check_output(['dpkg', '-l', 'filebeat'])
@@ -72,6 +73,8 @@ class TestFilebeatPlugin(unittest.TestCase):
     def test_configure_with_inputs_no_file(self, *args):
         '''validate configuration without file -
         rendered correctly and placed on the right place'''
+        os.mkdir(TEMP_FILEBEAT)
+
         dict1_valid = {
             'inputs': {'shipper': None,
                        'looging': {'rotateeverybytes': 10485760}},
@@ -104,6 +107,7 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_failed_configure(self, *args):
 
+        os.mkdir(TEMP_FILEBEAT)
         dict2_unvalid = {
             'inputs': None,
             'outputs': {'a': {'string': 'string'},
@@ -156,6 +160,8 @@ class TestFilebeatPlugin(unittest.TestCase):
     def test_configure_with_inputs_and_file(self, *args):
         '''validate configuration with inputs and file
          rendered correctly and placed on the right place'''
+        os.mkdir(TEMP_FILEBEAT)
+
         dict1_valid = {
             'inputs': {'shipper': None,
                        'looging': {'rotateeverybytes': 10485760}},
@@ -191,6 +197,8 @@ class TestFilebeatPlugin(unittest.TestCase):
     def test_configure_with_file_without_inputs(self, *args):
         '''validate configuration with file without inputs
          rendered correctly and placed on the right place'''
+        os.mkdir(TEMP_FILEBEAT)
+
         tasks.configure(os.path.join(
             'filebeat_plugin', 'tests', 'example.yml'), None)
         self.assertTrue(os.path.exists(CONFIG_FILE))

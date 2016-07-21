@@ -30,7 +30,6 @@ distro = distro.id()
 PATH = os.path.dirname(__file__)
 TEMP_FILEBEAT = os.path.join(tempfile.gettempdir(), 'filebeat')
 CONFIG_FILE = os.path.join(TEMP_FILEBEAT, 'filebeat.yml')
-os.mkdir(TEMP_FILEBEAT)
 
 
 def mock_install_ctx():
@@ -54,6 +53,8 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_download_filebeat(self):
         '''test download_filebeat function'''
+        os.mkdir(TEMP_FILEBEAT)
+
         filename = tasks.download_filebeat('', TEMP_FILEBEAT)
         if distro in ('ubuntu', 'debian'):
             self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
@@ -66,6 +67,8 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_download_file(self):
         '''test download -  verify file exists after download'''
+        os.mkdir(TEMP_FILEBEAT)
+
         filename = tasks._download_file(
             'https://download.elastic.co/beats/filebeat/' +
             'filebeat_1.2.3_amd64.deb',
@@ -78,4 +81,6 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_download_file_failed(self):
         '''test download - verify nothing downloaded'''
+        os.mkdir(TEMP_FILEBEAT)
+
         self.assertRaises(ValueError, tasks._download_file, None, None)
