@@ -15,6 +15,7 @@
 
 
 import os
+import shutil
 import unittest
 import tempfile
 
@@ -42,6 +43,11 @@ def mock_get_resource_from_manager(resource_path):
 
 
 class TestFilebeatPlugin(unittest.TestCase):
+
+    def tearDown(self):
+        # remove filebeat temp dir
+        if os.path.exists(TEMP_FILEBEAT):
+            shutil.rmtree(TEMP_FILEBEAT)
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)

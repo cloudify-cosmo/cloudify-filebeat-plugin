@@ -15,6 +15,7 @@
 
 
 import os
+import shutil
 import unittest
 import tempfile
 import subprocess
@@ -45,6 +46,11 @@ def mock_get_resource_from_manager(resource_path):
 
 class TestFilebeatPlugin(unittest.TestCase):
 
+    def tearDown(self):
+        # remove filebeat temp dir
+        if os.path.exists(TEMP_FILEBEAT):
+            shutil.rmtree(TEMP_FILEBEAT)
+
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
@@ -70,9 +76,9 @@ class TestFilebeatPlugin(unittest.TestCase):
             'inputs': {'shipper': None,
                        'looging': {'rotateeverybytes': 10485760}},
             'outputs': {'logstash':
-                            {'hosts': ['http://localhost:5044'],
-                             'bulk_max_size': 10,
-                             'index': 'filebeat'},
+                        {'hosts': ['http://localhost:5044'],
+                         'bulk_max_size': 10,
+                         'index': 'filebeat'},
                         'elasticsearch':
                             {'hosts': ['http://localhost:9200'],
                              'path': 'filebeat.template.json'}},
@@ -154,12 +160,12 @@ class TestFilebeatPlugin(unittest.TestCase):
             'inputs': {'shipper': None,
                        'looging': {'rotateeverybytes': 10485760}},
             'outputs': {'logstash':
-                            {'hosts': ['http://localhost:5044'],
-                             'bulk_max_size': 10,
-                             'index': 'filebeat'},
+                        {'hosts': ['http://localhost:5044'],
+                         'bulk_max_size': 10,
+                         'index': 'filebeat'},
                         'elasticsearch':
-                            {'hosts': ['http://localhost:9200'],
-                             'path': 'filebeat.template.json'}},
+                        {'hosts': ['http://localhost:9200'],
+                         'path': 'filebeat.template.json'}},
             'paths': {'syslog': ['/var/log/syslog', '/var/log/auth.log'],
                       'nginx-access': ['/var/log/nginx/*.log']}
         }
@@ -193,4 +199,3 @@ class TestFilebeatPlugin(unittest.TestCase):
                 yaml.load(stream)
             except yaml.YAMLError, exc:
                 raise AssertionError(exc)
-
