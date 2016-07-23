@@ -18,6 +18,7 @@ import os
 import shutil
 import unittest
 import tempfile
+import subprocess
 
 import distro
 from mock import patch
@@ -46,7 +47,10 @@ class TestFilebeatPlugin(unittest.TestCase):
     def tearDown(self):
         # remove filebeat temp dir
         if os.path.exists(TEMP_FILEBEAT):
-            shutil.rmtree(TEMP_FILEBEAT)
+            try:
+                shutil.rmtree(TEMP_FILEBEAT)
+            except:
+                subprocess.call(['sudo', 'rm', '-rf', TEMP_FILEBEAT])
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
