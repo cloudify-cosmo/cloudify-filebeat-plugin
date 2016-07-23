@@ -65,6 +65,22 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
+    def test_download_filebeat_path_not_exists(self):
+        '''test download - verify nothing downloaded'''
+        filename = tasks.download_filebeat(
+            'https://download.elastic.co/beats/filebeat/' +
+            'filebeat_1.2.3_amd64.deb',
+            TEMP_FILEBEAT)
+
+        if distro in ('ubuntu', 'debian'):
+            self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
+        elif distro in ('centos', 'redhat'):
+            self.assertEqual(filename, 'filebeat-1.2.3-x86_64.rpm')
+        self.assertTrue(os.path.exists(os.path.join(TEMP_FILEBEAT, filename)))
+
+    @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
+    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
+    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
     def test_download_file(self):
         '''test download -  verify file exists after download'''
         os.mkdir(TEMP_FILEBEAT)
@@ -84,16 +100,3 @@ class TestFilebeatPlugin(unittest.TestCase):
         os.mkdir(TEMP_FILEBEAT)
 
         self.assertRaises(ValueError, tasks._download_file, None, None)
-
-    @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
-    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
-    def test_download_file_path_not_exists(self):
-        '''test download - verify nothing downloaded'''
-        filename = tasks._download_file(
-            'https://download.elastic.co/beats/filebeat/' +
-            'filebeat_1.2.3_amd64.deb',
-            TEMP_FILEBEAT)
-
-        self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
-        self.assertTrue(os.path.exists(filename))
