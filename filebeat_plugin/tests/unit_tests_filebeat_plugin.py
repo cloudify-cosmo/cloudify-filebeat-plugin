@@ -72,7 +72,7 @@ class TestFilebeatPlugin(unittest.TestCase):
         filename = tasks._download_file(
             'https://download.elastic.co/beats/filebeat/' +
             'filebeat_1.2.3_amd64.deb',
-            PATH)
+            TEMP_FILEBEAT)
         self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
         self.assertTrue(os.path.exists(filename))
 
@@ -93,7 +93,7 @@ class TestFilebeatPlugin(unittest.TestCase):
         filename = tasks._download_file(
             'https://download.elastic.co/beats/filebeat/' +
             'filebeat_1.2.3_amd64.deb',
-            PATH)
+            TEMP_FILEBEAT)
 
         self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
         self.assertTrue(os.path.exists(filename))
