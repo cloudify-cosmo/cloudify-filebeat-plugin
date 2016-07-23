@@ -118,11 +118,6 @@ class TestFilebeatPlugin(unittest.TestCase):
                       'c': {'list': None}}
         }
         self.assertRaises(ValueError, tasks.configure, '', dict2_unvalid)
-        with open(CONFIG_FILE) as stream:
-            try:
-                yaml.load(stream)
-            except yaml.YAMLError, exc:
-                raise AssertionError(exc)
 
         dict3_unvalid = {
             'inputs': {'a': None, 'b': {'int': 10},
@@ -132,11 +127,6 @@ class TestFilebeatPlugin(unittest.TestCase):
                       'c': {'list': ['a', 'b', 'c']}}
         }
         self.assertRaises(ValueError, tasks.configure, '', dict3_unvalid)
-        with open(CONFIG_FILE) as stream:
-            try:
-                yaml.load(stream)
-            except yaml.YAMLError, exc:
-                raise AssertionError(exc)
 
         dict4_unvalid = {
             'inputs': {'string': 'string', 'int': None,
@@ -146,8 +136,6 @@ class TestFilebeatPlugin(unittest.TestCase):
             'paths': '',
         }
         self.assertRaises(ValueError, tasks.configure, '', dict4_unvalid)
-        with open(CONFIG_FILE) as stream:
-            raise AssertionError(exc)
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
