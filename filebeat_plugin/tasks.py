@@ -162,7 +162,7 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
                                              filebeat_config)
         except:
             raise ValueError(
-                "wrong inputs prodided! can't redner configuration file")
+                "wrong inputs provided! can't redner configuration file")
     else:
         filebeat_config_file = pkg_resources.resource_string(
             filebeat_plugin.__name__, 'resources/filebeat.yml')
@@ -172,7 +172,7 @@ def configure(filebeat_config_file='', filebeat_config='', **kwargs):
                 f.write(configuration.render(filebeat_config))
         except:
             raise ValueError(
-                "wrong inputs prodided! can't redner configuration file")
+                "wrong inputs provided! can't redner configuration file")
     _run('sudo mv {0} {1}'.format(dest_file, FILEBEAT_CONFIG_FILE_DEFAULT))
     try:
         _run('filebeat -c {0} -configtest'.format(
