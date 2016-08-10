@@ -28,22 +28,20 @@ from cloudify.mocks import MockCloudifyContext
 from .. import tasks
 
 
-distro = distro.id()
+distro_id = distro.id()
 PATH = os.path.dirname(__file__)
 TEMP_FILEBEAT = os.path.join(tempfile.gettempdir(), 'filebeat')
 CONFIG_FILE = os.path.join(TEMP_FILEBEAT, 'filebeat.yml')
 
-
-def mock_install_ctx():
-    return MockCloudifyContext()
-
-
-def mock_get_resource_from_manager(resource_path):
+def mock_read_file(resource_path):
     with open(resource_path) as f:
         return f.read()
-
-
+    
+    
 class TestFilebeatPlugin(unittest.TestCase):
+
+    def setUp(self):
+        os.mkdir(TEMP_FILEBEAT)
 
     def tearDown(self):
         # remove filebeat temp dir
@@ -52,28 +50,27 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
+    @patch('filebeat_plugin.tasks.ctx', MockCloudifyContext())
     def test_install_service(self):
-        '''verify service is available after installation -
-         installation file is provided'''
-        os.mkdir(TEMP_FILEBEAT)
+        '''Verify service is available after installation -
+         installation file is provided
+         '''
 
         if distro in ('ubuntu', 'debian'):
             tasks.install_filebeat('filebeat_1.2.3_amd64.deb', PATH)
             output = subprocess.check_output(['dpkg', '-l', 'filebeat'])
-            self.assertIn('filebeat', output)
         elif distro in ('centos', 'redhat'):
             tasks.install_filebeat('filebeat-1.2.3-x86_64.rpm', PATH)
             output = subprocess.check_output(['rpm', '-qa'])
-            self.assertIn('filebeat', output)
+        self.assertIn('filebeat', output)
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
+    @patch('filebeat_plugin.tasks.ctx', MockCloudifyContext())
     def test_configure_with_inputs_no_file(self, *args):
-        '''validate configuration without file -
-        rendered correctly and placed on the right place'''
-        os.mkdir(TEMP_FILEBEAT)
+        '''Validate configuration without file -
+        rendered correctly and placed on the right place
+        '''
 
         dict1_valid = {
             'inputs': {'shipper': None,
@@ -104,10 +101,9 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
+    @patch('filebeat_plugin.tasks.ctx', MockCloudifyContext())
     def test_failed_configure(self, *args):
 
-        os.mkdir(TEMP_FILEBEAT)
         dict2_unvalid = {
             'inputs': None,
             'outputs': {'a': {'string': 'string'},
@@ -139,16 +135,16 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
+    @patch('filebeat_plugin.tasks.ctx', MockCloudifyContext())
     @patch('cloudify.utils.get_manager_file_server_blueprints_root_url',
            return_value='')
     @patch('cloudify.manager.get_resource_from_manager',
-           return_value=mock_get_resource_from_manager(os.path.join(
+           return_value=mock_read_file(os.path.join(
                'filebeat_plugin', 'tests', 'example_with_inputs.yml')))
     def test_configure_with_inputs_and_file(self, *args):
-        '''validate configuration with inputs and file
-         rendered correctly and placed on the right place'''
-        os.mkdir(TEMP_FILEBEAT)
+        '''Validate configuration with inputs and file
+         rendered correctly and placed on the right place
+         '''
 
         dict1_valid = {
             'inputs': {'shipper': None,
@@ -176,15 +172,16 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
-    @patch('filebeat_plugin.tasks.ctx', mock_install_ctx())
+    @patch('filebeat_plugin.tasks.ctx', MockCloudifyContext())
     @patch('cloudify.utils.get_manager_file_server_blueprints_root_url',
            return_value='')
     @patch('cloudify.manager.get_resource_from_manager',
-           return_value=mock_get_resource_from_manager(
+           return_value=mock_read_file(
                os.path.join('filebeat_plugin', 'tests', 'example.yml')))
     def test_configure_with_file_without_inputs(self, *args):
-        '''validate configuration with file without inputs
-         rendered correctly and placed on the right place'''
+        '''Validate configuration with file without inputs
+         rendered correctly and placed on the right place
+         '''
         os.mkdir(TEMP_FILEBEAT)
 
         tasks.configure(os.path.join(
