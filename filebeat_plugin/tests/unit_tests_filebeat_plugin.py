@@ -90,13 +90,12 @@ class TestFilebeatPlugin(unittest.TestCase):
 
         self.assertRaises(ValueError, tasks._download_file, None, None)
 
-    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', MockCloudifyContext())
-    def test_run_command_(self):
-        output = tasks._run('cd ~')
+    def test_run_command(self):
+        output = tasks._run("cd ~")
         self.assertEqual(output.returncode, 0)
 
-    @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', MockCloudifyContext())
     def test_run_command_failed(self):
-        self.assertRaises(SystemExit, tasks._run, 'invalid command')
+        self.assertRaises(OSError, tasks._run, "invalid command")
+        self.assertRaises(SystemExit, tasks._run, "mkdir /opt/test")

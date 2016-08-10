@@ -33,11 +33,12 @@ PATH = os.path.dirname(__file__)
 TEMP_FILEBEAT = os.path.join(tempfile.gettempdir(), 'filebeat')
 CONFIG_FILE = os.path.join(TEMP_FILEBEAT, 'filebeat.yml')
 
+
 def mock_read_file(resource_path):
     with open(resource_path) as f:
         return f.read()
-    
-    
+
+
 class TestFilebeatPlugin(unittest.TestCase):
 
     def setUp(self):
@@ -59,10 +60,11 @@ class TestFilebeatPlugin(unittest.TestCase):
         if distro in ('ubuntu', 'debian'):
             tasks.install_filebeat('filebeat_1.2.3_amd64.deb', PATH)
             output = subprocess.check_output(['dpkg', '-l', 'filebeat'])
+            self.assertIn('filebeat', output)
         elif distro in ('centos', 'redhat'):
             tasks.install_filebeat('filebeat-1.2.3-x86_64.rpm', PATH)
             output = subprocess.check_output(['rpm', '-qa'])
-        self.assertIn('filebeat', output)
+            self.assertIn('filebeat', output)
 
     @patch('filebeat_plugin.tasks.FILEBEAT_CONFIG_FILE_DEFAULT', CONFIG_FILE)
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
@@ -182,7 +184,6 @@ class TestFilebeatPlugin(unittest.TestCase):
         '''Validate configuration with file without inputs
          rendered correctly and placed on the right place
          '''
-        os.mkdir(TEMP_FILEBEAT)
 
         tasks.configure(os.path.join(
             'filebeat_plugin', 'tests', 'example.yml'), None)
