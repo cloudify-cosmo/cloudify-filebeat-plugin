@@ -26,7 +26,7 @@ from cloudify.mocks import MockCloudifyContext
 from .. import tasks
 
 
-distro = distro.id()
+distro_id = distro.id()
 TEMP_FILEBEAT = os.path.join(tempfile.gettempdir(), 'filebeat')
 
 
@@ -47,9 +47,9 @@ class TestFilebeatPlugin(unittest.TestCase):
         '''
 
         filename = tasks.download_filebeat('', TEMP_FILEBEAT)
-        if distro in ('ubuntu', 'debian'):
+        if distro_id in ('ubuntu', 'debian'):
             self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
-        elif distro in ('centos', 'redhat'):
+        elif distro_id in ('centos', 'redhat'):
             self.assertEqual(filename, 'filebeat-1.2.3-x86_64.rpm')
         self.assertTrue(os.path.exists(os.path.join(TEMP_FILEBEAT, filename)))
 
@@ -63,9 +63,9 @@ class TestFilebeatPlugin(unittest.TestCase):
             'filebeat_1.2.3_amd64.deb',
             TEMP_FILEBEAT)
 
-        if distro in ('ubuntu', 'debian'):
+        if distro_id in ('ubuntu', 'debian'):
             self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
-        elif distro in ('centos', 'redhat'):
+        elif distro_id in ('centos', 'redhat'):
             self.assertEqual(filename, 'filebeat-1.2.3-x86_64.rpm')
         self.assertTrue(os.path.exists(os.path.join(TEMP_FILEBEAT, filename)))
 

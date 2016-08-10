@@ -57,11 +57,11 @@ class TestFilebeatPlugin(unittest.TestCase):
          installation file is provided
          '''
 
-        if distro in ('ubuntu', 'debian'):
+        if distro_id in ('ubuntu', 'debian'):
             tasks.install_filebeat('filebeat_1.2.3_amd64.deb', PATH)
             output = subprocess.check_output(['dpkg', '-l', 'filebeat'])
             self.assertIn('filebeat', output)
-        elif distro in ('centos', 'redhat'):
+        elif distro_id in ('centos', 'redhat'):
             tasks.install_filebeat('filebeat-1.2.3-x86_64.rpm', PATH)
             output = subprocess.check_output(['rpm', '-qa'])
             self.assertIn('filebeat', output)
