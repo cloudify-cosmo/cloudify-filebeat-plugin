@@ -92,7 +92,7 @@ class TestFilebeatPlugin(unittest.TestCase):
 
     @patch('filebeat_plugin.tasks.ctx', MockCloudifyContext())
     def test_run_command(self):
-        output = tasks._run("cd ~")
+        output = tasks._run('cd ..')
         self.assertEqual(output.returncode, 0)
 
     @patch('filebeat_plugin.tasks.ctx', MockCloudifyContext())
