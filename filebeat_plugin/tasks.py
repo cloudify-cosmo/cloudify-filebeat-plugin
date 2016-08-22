@@ -65,11 +65,10 @@ def install(filebeat_config_inputs,
             'Error! filebeat-plugin is available on linux distribution only')
     if not filebeat_install_path:
         filebeat_install_path = FILEBEAT_PATH_DEFAULT
-    ctx.instance.runtime_properties[
-        'filebeat_install_path'] = filebeat_install_path
     if os.path.isfile(filebeat_install_path):
-        raise exceptions.NonRecoverableError(
-            "Error! /opt/filebeat file already exists, can't create dir.")
+        raise ValueError(
+            format("Error! {0} file already exists, can't create dir.",
+                   filebeat_install_path))
 
     installation_file = download_filebeat(download_url, filebeat_install_path)
     install_filebeat(installation_file, filebeat_install_path)
@@ -87,17 +86,18 @@ def start(**kwargs):
     ctx.logger.info('Starting filebeat service...')
     filebeat_config_file = FILEBEAT_CONFIG_FILE_DEFAULT
     if not os.path.isfile(filebeat_config_file):
-        raise exceptions.NonRecoverableError(
+        raise ValueError(
             "Can't start the service. Wrong config file provided")
 
     if os.path.exists('/usr/bin/systemctl'):
-        _run('sudo systemctl restart filebeat')
+        proc = _run('sudo systemctl restart filebeat')
     else:
-        _run('sudo service filebeat restart')
+        proc = _run('sudo service filebeat restart')
 
     ctx.logger.info(
         'Good Luck! filebeat service is up!'
         'Have an awesome logging experience...')
+    return proc
 
 
 def download_filebeat(download_url='', filebeat_install_path='', **kwargs):
@@ -200,7 +200,7 @@ def _download_file(url, destination):
     return filename
 
 
-def _run(command, retries=0, ignore_failures=False):
+def _run(command):
     if isinstance(command, str):
         command = shlex.split(command)
     stderr = subprocess.PIPE
@@ -211,12 +211,7 @@ def _run(command, retries=0, ignore_failures=False):
     proc.aggr_stdout, proc.aggr_stderr = proc.communicate()
     if proc.returncode != 0:
         command_str = ' '.join(command)
-        if retries:
-            ctx.logger.warn('Failed running command: {0}. Retrying. '
-                            '({1} left)'.format(command_str, retries))
-            proc = _run(command, retries - 1)
-        elif not ignore_failures:
-            ctx.logger.error('Failed running command: {0} ({1}).'.format(
-                command_str, proc.aggr_stderr))
-            sys.exit(1)
+        ctx.logger.error('Failed running command: {0} ({1}).'.format(
+            command_str, proc.aggr_stderr))
+        sys.exit(1)
     return proc

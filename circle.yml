@@ -10,8 +10,8 @@ checkout:
 dependencies:
   pre:
     - pyenv local 2.7.9 
-    - curl -L -O https://download.elastic.co/beats/filebeat/filebeat_1.2.3_amd64.deb
-    - sudo dpkg -i filebeat_1.2.3_amd64.deb
+#    - curl -L -O https://download.elastic.co/beats/filebeat/filebeat_1.2.3_amd64.deb
+#    - sudo dpkg -i filebeat_1.2.3_amd64.deb
   override:
     - pip install tox
 

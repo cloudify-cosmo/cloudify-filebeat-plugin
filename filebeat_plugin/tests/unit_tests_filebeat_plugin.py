@@ -28,6 +28,7 @@ from .. import tasks
 
 distro_id = distro.id()
 TEMP_FILEBEAT = os.path.join(tempfile.gettempdir(), 'filebeat')
+PATH = os.path.dirname(__file__)
 
 
 class TestFilebeatPlugin(unittest.TestCase):
@@ -77,10 +78,11 @@ class TestFilebeatPlugin(unittest.TestCase):
 
         filename = tasks._download_file(
             'https://download.elastic.co/beats/filebeat/' +
-            'filebeat_1.2.3_amd64.deb',
+            'filebeat-5.0.0-alpha5-amd64.deb',
             TEMP_FILEBEAT)
-        self.assertEqual(filename, 'filebeat_1.2.3_amd64.deb')
-        self.assertTrue(os.path.exists(filename))
+        self.assertEqual(filename, 'filebeat-5.0.0-alpha5-amd64.deb')
+        file_path = os.path.join(TEMP_FILEBEAT, filename)
+        self.assertTrue(os.path.exists(file_path))
 
     @patch('filebeat_plugin.tasks.FILEBEAT_PATH_DEFAULT', TEMP_FILEBEAT)
     @patch('filebeat_plugin.tasks.ctx', MockCloudifyContext())
