@@ -212,7 +212,6 @@ class TestFilebeatPlugin(unittest.TestCase):
     @patch('filebeat_plugin.tasks.ctx', MockCloudifyContext())
     def test_06_start(self, *args):
         output = tasks.start()
-        output = output.aggr_stdout
 
         self.assertNotIn('error', output)
 

@@ -97,7 +97,7 @@ def start(**kwargs):
     ctx.logger.info(
         'Good Luck! filebeat service is up!'
         'Have an awesome logging experience...')
-    return proc
+    return proc.aggr_stdout
 
 
 def download_filebeat(download_url='', filebeat_install_path='', **kwargs):

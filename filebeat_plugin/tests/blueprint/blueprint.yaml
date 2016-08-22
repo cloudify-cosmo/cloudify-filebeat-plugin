@@ -66,7 +66,24 @@ dsl_definitions:
 
 node_templates:
 
+
+node_templates:
+
   public_ip1:
+    type: cloudify.openstack.nodes.FloatingIP
+    properties:
+      floatingip:
+        floating_network_name: { get_input: external_network_name }
+      openstack_config: *openstack_configuration
+
+  public_ip2:
+    type: cloudify.openstack.nodes.FloatingIP
+    properties:
+      floatingip:
+        floating_network_name: { get_input: external_network_name }
+      openstack_config: *openstack_configuration
+
+  public_ip3:
     type: cloudify.openstack.nodes.FloatingIP
     properties:
       floatingip:
@@ -90,10 +107,10 @@ node_templates:
           port: 5044
       openstack_config: *openstack_configuration
 
-  VM:
+  VM_ubuntu:
     type: cloudify.openstack.nodes.Server
     properties:
-      resource_id: monitoring_ubuntu_server
+      resource_id: logging_ubuntu_server
       cloudify_agent:
         user: ubuntu
       server:
@@ -107,6 +124,8 @@ node_templates:
     relationships:
       - type: cloudify.openstack.server_connected_to_floating_ip
         target: public_ip1
+      - type: my_types.relationships.ConfigureIp
+        target: VM_DB
       - type: cloudify.openstack.server_connected_to_security_group
         target: sg_ngnix_es_logstash
     interfaces:
@@ -127,12 +146,12 @@ node_templates:
               outputs:
                 logstash:
                   hosts:
-                    - { concat: [get_attribute: [public_ip1, floating_ip_address], ':5044' ] }
+                    - { concat: [get_attribute: [public_ip3, floating_ip_address], ':5044' ] }
                   bulk_max_size: 1024
                   index: filebeat
                 elasticsearch:
                   hosts:
-                    - { concat: [get_attribute: [public_ip1, floating_ip_address], ':9200' ] }
+                    - { concat: [get_attribute: [public_ip3, floating_ip_address], ':9200' ] }
                   path: filebeat.template.json
               inputs:
                 shipper:
@@ -141,6 +160,79 @@ node_templates:
         start:
             implementation: filebeat.filebeat_plugin.tasks.start
 
+  VM_centos:
+    type: cloudify.openstack.nodes.Server
+    properties:
+      resource_id: logging_centos_server
+      cloudify_agent:
+        user: centos
+      server:
+        image: 74ff4015-aee1-4e02-aaa8-1c77b2650394
+        flavor: c4b193d2-f331-4250-9b15-bbfde97c462a
+        userdata: |
+          #!/bin/bash
+          echo 127.0.1.1 $(cat /etc/hostname) | sudo tee -a sudo /etc/hosts >/dev/null
+          echo "nameserver 8.8.8.8" | sudo tee -a sudo /etc/resolv.conf > /dev/null
+          echo "nameserver 8.8.8.8" | sudo tee -a sudo /etc/resolvconf/resolv.conf.d/base > /dev/null
+    relationships:
+      - type: cloudify.openstack.server_connected_to_floating_ip
+        target: public_ip2
+      - type: cloudify.openstack.server_connected_to_security_group
+        target: sg_ngnix_es_logstash
+      - type: my_types.relationships.ConfigureIp
+        target: VM_DB
+    interfaces:
+      cloudify.interfaces.monitoring_agent:
+        install:
+          implementation: filebeat.filebeat_plugin.tasks.install
+          inputs:
+            filebeats_install_path:
+            download_url:
+            filebeat_config_file:
+            filebeat_config_inputs:
+              paths:
+                syslog:
+                  - /var/log/syslog
+                  - /var/log/auth.log
+                nginx-access:
+                  - /var/log/nginx/*.log
+              outputs:
+                logstash:
+                  hosts:
+                    - { concat: [get_attribute: [public_ip3, floating_ip_address], ':5044' ] }
+                  bulk_max_size: 1024
+                  index: filebeat
+                elasticsearch:
+                  hosts:
+                    - { concat: [get_attribute: [public_ip3, floating_ip_address], ':9200' ] }
+                  path: filebeat.template.json
+              inputs:
+                shipper:
+                logging:
+                  rotateeverybytes: 10485760
+        start:
+            implementation: filebeat.filebeat_plugin.tasks.start
+
+    VM_DB:
+        type: cloudify.openstack.nodes.Server
+        properties:
+          resource_id: es_db_server
+          cloudify_agent:
+            user: ubuntu
+          server:
+            image: 6c3047c6-17b1-4aaf-a657-9229bb481e50
+            flavor: c4b193d2-f331-4250-9b15-bbfde97c462a
+            userdata: |
+              #!/bin/bash
+              echo 127.0.1.1 $(cat /etc/hostname) | sudo tee -a sudo /etc/hosts >/dev/null
+              echo "nameserver 8.8.8.8" | sudo tee -a sudo /etc/resolv.conf > /dev/null
+              echo "nameserver 8.8.8.8" | sudo tee -a sudo /etc/resolvconf/resolv.conf.d/base > /dev/null
+        relationships:
+          - type: cloudify.openstack.server_connected_to_floating_ip
+            target: public_ip3
+          - type: cloudify.openstack.server_connected_to_security_group
+            target: sg_ngnix_es_logstash
+
   elasticsearch:
     type: my_types.nodes.ElasticsearchServer
     properties:
@@ -148,7 +240,7 @@ node_templates:
        clusterName: hello-world
     relationships:
       - type: cloudify.relationships.contained_in
-        target: VM
+        target: VM_DB
 
   logstash:
     type: my_types.nodes.logstashServer
@@ -156,14 +248,22 @@ node_templates:
        port: 5044
     relationships:
       - type: cloudify.relationships.contained_in
-        target: VM
+        target: VM_DB
       - type: cloudify.relationships.depends_on
         target: elasticsearch
 
-  ngnix:
+  ngnix_ubuntu:
     type: my_types.nodes.NgnixNode
     relationships:
       - type: cloudify.relationships.contained_in
-        target: VM
+        target: VM_ubuntu
+      - type: cloudify.relationships.depends_on
+        target: logstash
+
+  ngnix_centos:
+    type: my_types.nodes.NgnixNode
+    relationships:
+      - type: cloudify.relationships.contained_in
+        target: VM_centos
       - type: cloudify.relationships.depends_on
         target: logstash
