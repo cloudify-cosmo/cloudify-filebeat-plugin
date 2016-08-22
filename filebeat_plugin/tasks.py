@@ -117,7 +117,7 @@ def download_filebeat(download_url='', filebeat_install_path='', **kwargs):
             download_url = 'https://download.elastic.co/beats/filebeat/' + \
                 'filebeat_1.2.3_amd64.deb'
         elif distro in ('centos', 'redhat'):
-            download_url = 'https://download.elastic.co/beats/filebeat/ ' + \
+            download_url = 'https://download.elastic.co/beats/filebeat/' + \
                 'filebeat-1.2.3-x86_64.rpm'
         else:
             raise exceptions.NonRecoverableError(

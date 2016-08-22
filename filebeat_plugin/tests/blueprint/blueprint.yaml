@@ -213,25 +213,25 @@ node_templates:
         start:
             implementation: filebeat.filebeat_plugin.tasks.start
 
-    VM_DB:
-        type: cloudify.openstack.nodes.Server
-        properties:
-          resource_id: es_db_server
-          cloudify_agent:
-            user: ubuntu
-          server:
-            image: 6c3047c6-17b1-4aaf-a657-9229bb481e50
-            flavor: c4b193d2-f331-4250-9b15-bbfde97c462a
-            userdata: |
-              #!/bin/bash
-              echo 127.0.1.1 $(cat /etc/hostname) | sudo tee -a sudo /etc/hosts >/dev/null
-              echo "nameserver 8.8.8.8" | sudo tee -a sudo /etc/resolv.conf > /dev/null
-              echo "nameserver 8.8.8.8" | sudo tee -a sudo /etc/resolvconf/resolv.conf.d/base > /dev/null
-        relationships:
-          - type: cloudify.openstack.server_connected_to_floating_ip
-            target: public_ip3
-          - type: cloudify.openstack.server_connected_to_security_group
-            target: sg_ngnix_es_logstash
+  VM_DB:
+    type: cloudify.openstack.nodes.Server
+    properties:
+      resource_id: es_db_server
+      cloudify_agent:
+        user: ubuntu
+      server:
+        image: 6c3047c6-17b1-4aaf-a657-9229bb481e50
+        flavor: c4b193d2-f331-4250-9b15-bbfde97c462a
+        userdata: |
+          #!/bin/bash
+          echo 127.0.1.1 $(cat /etc/hostname) | sudo tee -a sudo /etc/hosts >/dev/null
+          echo "nameserver 8.8.8.8" | sudo tee -a sudo /etc/resolv.conf > /dev/null
+          echo "nameserver 8.8.8.8" | sudo tee -a sudo /etc/resolvconf/resolv.conf.d/base > /dev/null
+    relationships:
+      - type: cloudify.openstack.server_connected_to_floating_ip
+        target: public_ip3
+      - type: cloudify.openstack.server_connected_to_security_group
+        target: sg_ngnix_es_logstash
 
   elasticsearch:
     type: my_types.nodes.ElasticsearchServer
