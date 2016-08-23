@@ -7,7 +7,7 @@ imports:
     # to speed things up, it is possible downloading this file,
     # including it in the blueprint directory and importing it
     # instead.
-    - http://www.getcloudify.org/spec/cloudify/3.5m1/types.yaml
+    - http://www.getcloudify.org/spec/cloudify/4.0m1/types.yaml
     - http://www.getcloudify.org/spec/fabric-plugin/1.4.1/plugin.yaml
     - http://www.getcloudify.org/spec/openstack-plugin/1.4/plugin.yaml
     # relative import of plugin.yaml that resides in the blueprint directory
@@ -192,10 +192,8 @@ node_templates:
             filebeat_config_inputs:
               paths:
                 syslog:
-                  - /var/log/syslog
-                  - /var/log/auth.log
-                nginx-access:
-                  - /var/log/nginx/*.log
+                  - /var/log/messages
+                  - /var/log/*.log
               outputs:
                 logstash:
                   hosts:
@@ -257,13 +255,5 @@ node_templates:
     relationships:
       - type: cloudify.relationships.contained_in
         target: VM_ubuntu
-      - type: cloudify.relationships.depends_on
-        target: logstash
-
-  ngnix_centos:
-    type: my_types.nodes.NgnixNode
-    relationships:
-      - type: cloudify.relationships.contained_in
-        target: VM_centos
       - type: cloudify.relationships.depends_on
         target: logstash
