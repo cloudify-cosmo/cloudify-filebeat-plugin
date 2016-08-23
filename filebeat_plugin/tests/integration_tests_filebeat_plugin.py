@@ -29,7 +29,7 @@ from .. import tasks
 
 
 distro_id = distro.id()
-PATH = os.path.dirname(__file__)
+PATH = os.path.join(os.path.expanduser('~'), 'cloudify-filebeat-plugin')
 TEMP_FILEBEAT = os.path.join(tempfile.gettempdir(), 'filebeat')
 CONFIG_FILE = os.path.join(TEMP_FILEBEAT, 'filebeat.yml')
 installation_file = os.path.join('/', 'etc', 'init.d', 'filebeat')
