@@ -14,81 +14,25 @@ imports:
     - test_plugin.yaml
     - my_types.yaml
 
-
-inputs:
-  keystone_username:
-    default: ''
-    type: string
-
-  keystone_password:
-    default: ''
-    type: string
-
-  keystone_tenant_name:
-    default: ''
-    type: string
-
-  keystone_url:
-    default: ''
-    type: string
-
-  region:
-    default: ''
-    type: string
-
-  nova_url:
-    default: ''
-    type: string
-
-  neutron_url:
-    default: ''
-    type: string
-
-  external_network_name:
-    type: string
-
-  resources_prefix:
-    default: ''
-    type: string
-
-
-dsl_definitions:
-  openstack_configuration: &openstack_configuration
-    username: { get_input: keystone_username }
-    password: { get_input: keystone_password }
-    tenant_name: { get_input: keystone_tenant_name }
-    auth_url: { get_input: keystone_url }
-    region: { get_input: region }
-    nova_url: { get_input: nova_url }
-    neutron_url: { get_input: neutron_url }
-    resources_prefix: { get_input: resources_prefix }
-
-
-node_templates:
-
-
 node_templates:
 
   public_ip1:
     type: cloudify.openstack.nodes.FloatingIP
     properties:
       floatingip:
-        floating_network_name: { get_input: external_network_name }
-      openstack_config: *openstack_configuration
+        floating_network_name: external
 
   public_ip2:
     type: cloudify.openstack.nodes.FloatingIP
     properties:
       floatingip:
-        floating_network_name: { get_input: external_network_name }
-      openstack_config: *openstack_configuration
+        floating_network_name: external
 
   public_ip3:
     type: cloudify.openstack.nodes.FloatingIP
     properties:
       floatingip:
-        floating_network_name: { get_input: external_network_name }
-      openstack_config: *openstack_configuration
+        floating_network_name: external
 
   sg_ngnix_es_logstash:
     type: cloudify.openstack.nodes.SecurityGroup
@@ -105,7 +49,6 @@ node_templates:
           port: 9200
         - remote_ip_prefix: 0.0.0.0/0
           port: 5044
-      openstack_config: *openstack_configuration
 
   VM_ubuntu:
     type: cloudify.openstack.nodes.Server
@@ -257,3 +200,7 @@ node_templates:
         target: VM_ubuntu
       - type: cloudify.relationships.depends_on
         target: logstash
+
+outputs:
+    ip:
+        value: { get_attribute: [public_ip3, floating_ip_address] }
