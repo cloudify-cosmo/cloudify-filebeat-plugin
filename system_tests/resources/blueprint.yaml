@@ -1,16 +1,9 @@
-# DSL version, should appear in the main blueprint.yaml
-# and may appear in other imports. In such case, the versions must match
 tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
-    # importing cloudify related types, plugins, workflow, etc...
-    # to speed things up, it is possible downloading this file,
-    # including it in the blueprint directory and importing it
-    # instead.
     - http://www.getcloudify.org/spec/cloudify/4.0m1/types.yaml
     - http://www.getcloudify.org/spec/fabric-plugin/1.4.1/plugin.yaml
     - http://www.getcloudify.org/spec/openstack-plugin/1.4/plugin.yaml
-    # relative import of plugin.yaml that resides in the blueprint directory
     - test_plugin.yaml
     - my_types.yaml
 

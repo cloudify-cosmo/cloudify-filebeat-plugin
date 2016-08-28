@@ -3,4 +3,4 @@ plugins:
     executor: host_agent
     source: http://www.getcloudify.org/spec/filebeat-plugin/0.1.dev0/plugin.yaml
     package_name: cloudify-filebeat-plugin
-    package_version: 0.1.dev0
+    package_version: 0.1dev0

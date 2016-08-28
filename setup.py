@@ -23,7 +23,7 @@ setup(
     # Do not use underscores in the plugin name.
     name='cloudify-filebeat-plugin',
 
-    version='0.1.dev0',
+    version='0.1',
     author='Gigaspaces',
     author_email='cosmo-admin@gigaspaces.com',
     description='plugin for running logging interface (based on Filebeats)',
